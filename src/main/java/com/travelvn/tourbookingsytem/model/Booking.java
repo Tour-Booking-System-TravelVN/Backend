@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
@@ -52,6 +53,9 @@ public class Booking {
     @Lob
     @Column(name = "note")
     private String note;
+
+    @Column(name = "payment_id")
+    private String payment_id;
 
     @Column(name = "total_amount", nullable = false, precision = 19, scale = 3)
     private BigDecimal totalAmount;

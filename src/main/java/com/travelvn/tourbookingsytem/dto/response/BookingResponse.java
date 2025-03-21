@@ -33,6 +33,8 @@ public class BookingResponse {
 
     private String note;
 
+    private String payment_id;
+
     private BigDecimal totalAmount;
 
 }
