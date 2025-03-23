@@ -11,8 +11,8 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface FestivalMapper {
     Festival toFestival(FestivalRequest festivalRequest);
-    Festival toFestival(FestivalResponse festivalResponse);
+//    Festival toFestival(FestivalResponse festivalResponse);
 
-    FestivalRequest toFestivalRequest(Festival festival);
+//    FestivalRequest toFestivalRequest(Festival festival);
     FestivalResponse toFestivalResponse(Festival festival);
 }

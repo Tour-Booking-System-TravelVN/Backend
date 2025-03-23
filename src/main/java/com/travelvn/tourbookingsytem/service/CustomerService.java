@@ -5,14 +5,16 @@ import com.travelvn.tourbookingsytem.dto.response.CustomerResponse;
 import com.travelvn.tourbookingsytem.mapper.CustomerMapper;
 import com.travelvn.tourbookingsytem.model.Customer;
 import com.travelvn.tourbookingsytem.repository.CustomerRepository;
+import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
 @Service
+@FieldDefaults(makeFinal = true)
 public class CustomerService {
 
-    private final CustomerRepository customerRepository;
+    private CustomerRepository customerRepository;
 
-    private final CustomerMapper customerMapper;
+    private CustomerMapper customerMapper;
 
     public CustomerService(CustomerRepository customerRepository, CustomerMapper customerMapper){
         this.customerMapper = customerMapper;

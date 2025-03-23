@@ -12,8 +12,8 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface GuideIdMapper {
     GuideId toGuideId(GuideIdRequest guideIdRequest);
-    GuideId toGuideId(GuideIdResponse guideIdResponse);
+//    GuideId toGuideId(GuideIdResponse guideIdResponse);
 
     GuideIdResponse toGuideIdResponse(GuideId guideId);
-    GuideIdRequest toGuideIdRequest(GuideId guideId);
+//    GuideIdRequest toGuideIdRequest(GuideId guideId);
 }

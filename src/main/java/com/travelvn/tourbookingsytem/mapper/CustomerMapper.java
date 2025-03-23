@@ -8,10 +8,10 @@ import org.mapstruct.*;
 @Named("CustomerMapper")
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = {UserAccountMapper.class})
 public interface CustomerMapper {
-//    Customer toCustomer(CustomerRequest customerRequest);
+    Customer toCustomer(CustomerRequest customerRequest);
 //    Customer toCustomer(CustomerResponse customerResponse);
 
-    CustomerRequest toCustomerRequest(Customer customer);
+//    CustomerRequest toCustomerRequest(Customer customer);
 
     @Named("toCustomerResponse")
     @Mappings({

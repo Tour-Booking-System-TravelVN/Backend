@@ -8,8 +8,8 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring", uses = {BookingMapper.class, CustomerMapper.class})
 public interface CompanionCustomerMapper {
     CompanionCustomer toCompanionCustomer(CompanionCustomerRequest companionCustomerRequest);
-    CompanionCustomer toCompanionCustomer(CompanionCustomerResponse companionCustomerResponse);
+//    CompanionCustomer toCompanionCustomer(CompanionCustomerResponse companionCustomerResponse);
 
-    CompanionCustomerRequest toCompanionCustomerRequest(CompanionCustomer companionCustomer);
+//    CompanionCustomerRequest toCompanionCustomerRequest(CompanionCustomer companionCustomer);
     CompanionCustomerResponse toCompanionCustomerResponse(CompanionCustomer companionCustomer);
 }

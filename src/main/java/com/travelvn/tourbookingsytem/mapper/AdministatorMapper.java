@@ -8,8 +8,8 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface AdministatorMapper {
     Administrator toAdministrator(AdministratorRequest administratorRequest);
-    Administrator toAdministrator(AdministratorResponse administratorResponse);
+//    Administrator toAdministrator(AdministratorResponse administratorResponse);
 
     AdministratorResponse toAdministratorResponse(Administrator administrator);
-    AdministratorRequest toAdministratorRequest(Administrator administrator);
+//    AdministratorRequest toAdministratorRequest(Administrator administrator);
 }

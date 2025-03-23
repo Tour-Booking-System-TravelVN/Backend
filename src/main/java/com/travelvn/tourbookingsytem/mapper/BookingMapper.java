@@ -8,8 +8,8 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring", uses={TourUnitMapper.class, CustomerMapper.class})
 public interface BookingMapper {
     Booking toBooking(BookingRequest bookingRequest);
-    Booking toBooking(BookingResponse bookingResponse);
+//    Booking toBooking(BookingResponse bookingResponse);
 
     BookingResponse toBookingResponse(Booking booking);
-    BookingRequest toBookingRequest(Booking booking);
+//    BookingRequest toBookingRequest(Booking booking);
 }

@@ -11,8 +11,8 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface ImageMapper {
     Image toImage(ImageRequest imageRequest);
-    Image toImage(ImageResponse imageResponse);
+//    Image toImage(ImageResponse imageResponse);
 
-    ImageRequest toImageRequest(Image image);
+//    ImageRequest toImageRequest(Image image);
     ImageResponse toImageResponse(Image image);
 }

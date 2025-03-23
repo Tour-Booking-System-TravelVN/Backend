@@ -11,8 +11,8 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface TourUnitMapper {
     TourUnit toTourUnit(TourUnitRequest tourUnitRequest);
-    TourUnitRequest toTourUnitRequest(TourUnit tourUnit);
+//    TourUnitRequest toTourUnitRequest(TourUnit tourUnit);
 
-    TourUnit toTourUnit(TourUnitResponse tourUnitResponse);
+//    TourUnit toTourUnit(TourUnitResponse tourUnitResponse);
     TourUnitResponse toTourUnitResponse(TourUnit tourUnit);
 }

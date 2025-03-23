@@ -11,8 +11,8 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface GuideMapper {
     Guide toGuide(GuideRequest guideRequest);
-    Guide toGuide(GuideResponse guideResponse);
+//    Guide toGuide(GuideResponse guideResponse);
 
     GuideResponse toGuideResponse(Guide guide);
-    GuideRequest toGuideRequest(Guide guide);
+//    GuideRequest toGuideRequest(Guide guide);
 }

@@ -11,7 +11,7 @@ import lombok.*;
 public class UserAccountResponse {
     private String username;
 
-    private String password;
+//    private String password;
 
     private CustomerResponse c;
 

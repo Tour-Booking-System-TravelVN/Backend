@@ -23,4 +23,6 @@ public interface UserAccountMapper {
             @Mapping(target = "c", expression = "java(null)")
     })
     UserAccountResponse toUserAccountResponseWithoutCustomer(UserAccount userAccount);
+
+    void updateUserAccount(@MappingTarget UserAccount userAccount, UserAccountRequest userAccountRequest);
 }

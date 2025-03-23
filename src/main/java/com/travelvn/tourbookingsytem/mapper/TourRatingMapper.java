@@ -11,8 +11,8 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface TourRatingMapper {
     TourRating toTourRating(TourRatingRequest tourRatingRequest);
-    TourRating toTourRating(TourRatingResponse tourRatingResponse);
+//    TourRating toTourRating(TourRatingResponse tourRatingResponse);
 
-    TourRatingRequest toTourRatingRequest(TourRating tourRating);
+//    TourRatingRequest toTourRatingRequest(TourRating tourRating);
     TourRatingResponse toTourRatingResponse(TourRating tourRating);
 }
