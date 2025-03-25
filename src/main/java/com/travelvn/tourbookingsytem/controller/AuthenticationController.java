@@ -1,7 +1,10 @@
 package com.travelvn.tourbookingsytem.controller;
 
+import com.mysql.cj.log.Log;
 import com.nimbusds.jose.JOSEException;
 import com.travelvn.tourbookingsytem.dto.request.IntrospectRequest;
+import com.travelvn.tourbookingsytem.dto.request.LogoutRequest;
+import com.travelvn.tourbookingsytem.dto.request.RefreshTokenRequest;
 import com.travelvn.tourbookingsytem.dto.request.UserAccountRequest;
 import com.travelvn.tourbookingsytem.dto.response.ApiResponse;
 import com.travelvn.tourbookingsytem.dto.response.AuthenticationResponse;
@@ -63,6 +66,34 @@ public class AuthenticationController {
 
         return ApiResponse.<IntrospectResponse>builder()
                 .result(authenticationService.introspect(introspectRequest))
+                .build();
+    }
+
+    /**
+     * API đăng xuất
+     *
+     * @param token Token của người dùng
+     * @return
+     */
+    @PostMapping("/logout")
+    public ApiResponse<Void> logout(@RequestBody LogoutRequest token)
+                    throws ParseException, JOSEException {
+        authenticationService.logOut(token);
+        return ApiResponse.<Void>builder().build();
+    }
+
+    /**
+     * Api refresh token
+     * @param request token
+     * @return
+     * @throws JOSEException
+     * @throws ParseException
+     */
+    @PostMapping("/refresh")
+    public ApiResponse<AuthenticationResponse> authenticate(@RequestBody RefreshTokenRequest request)
+                    throws JOSEException, ParseException {
+        return ApiResponse.<AuthenticationResponse>builder()
+                .result(authenticationService.refreshToken(request))
                 .build();
     }
 }

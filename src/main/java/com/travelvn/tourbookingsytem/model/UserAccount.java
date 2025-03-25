@@ -13,10 +13,10 @@ import lombok.*;
 @Table(name = "user_account")
 public class UserAccount {
     @Id
-    @Column(name = "username", nullable = false, length = 40)
+    @Column(name = "username", nullable = false, unique = true, /*columnDefinition = "VARCHAR(40) COLLATE utf8mb4_unicode_ci",*/ length = 40)
     private String username;
 
-    @Column(name = "password", nullable = false, length = 20)
+    @Column(name = "password", nullable = false, length = 255)
     private String password;
 
     @ToString.Exclude

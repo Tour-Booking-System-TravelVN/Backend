@@ -27,7 +27,7 @@ public class UserAccountController {
     //Ví dụ phân quyền theo method: Kiểm tra quyền trước
     //@PostAuthorize(...): Kiểm tả quyền sau khi phương thức được gọi chạy xong
     //Ứng dụng postauth.. : cho phép đọc thông tin của mình: "returnObject.username == authentication.name"
-    @PreAuthorize("hasRole('CUSTOMER')")
+//    @PreAuthorize("hasRole('CUSTOMER')")
     @PostMapping("/register")
     public ApiResponse<Boolean> register(@RequestBody @Valid UserAccountRequest userAccountRequest) {
         ApiResponse<Boolean> apiResponse = new ApiResponse<>();

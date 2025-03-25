@@ -1,7 +1,9 @@
 package com.travelvn.tourbookingsytem.config;
 
 import com.travelvn.tourbookingsytem.enums.Role;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -22,14 +24,14 @@ import javax.crypto.spec.SecretKeySpec;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     //Các endpoint được phép gọi khi chưa có token
     private final String[] PUBLIC_ENDPOINTS = {"/login",
-            "/auth/token", "/auth/introspect"};
+            "/auth/token", "/auth/introspect", "/auth/logout","/auth/refresh","/register"};
 
-    @Value("${jwt.signerKey}")
-    private String signerKey;
+    private CustomJwtDecoder jwtDecoder;
 
     /**
      * Lọc xem có cho phép gọi API
@@ -39,20 +41,26 @@ public class SecurityConfig {
      * @throws Exception
      */
     @Bean
+    //Test dùng h2, thực tế dự án sẽ chạy MySQL
+    //Bean chỉ được load lên khi dùng MySQL
+//    @ConditionalOnProperty(prefix = "spring",
+//        value = "datasource.driverClassName",
+//        havingValue = "com.mysql.cj.jdbc.Driver")
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
 
         //Xác định filter cho các api
         //Có ví dụ chỉ có khách hàng mới được đăng ký -> thử thôi chưa đăng ký biết ai là khách hàng
         httpSecurity.authorizeHttpRequests(request ->
                 request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
-                        .requestMatchers(HttpMethod.POST, "/register").hasRole(Role.CUSTOMER.name())
+//                        .requestMatchers(HttpMethod.POST, "/auth/refresh").hasRole(Role.CUSTOMER.name())
                         .anyRequest().authenticated());
 
         //Authentication Provider
         httpSecurity.oauth2ResourceServer(oauth2 ->
                 oauth2.jwt(jwtConfigurer ->
-                        jwtConfigurer.decoder(jwtDecoder())
+                        jwtConfigurer.decoder(jwtDecoder)
                                 .jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                        .authenticationEntryPoint(new JWTAuthenticationEntryPoint())
         );
 
         //Chống tấn công XSS - Tạm bỏ - Khi lập trình FE nhớ bật lại
@@ -61,21 +69,21 @@ public class SecurityConfig {
         return httpSecurity.build();
     }
 
-    /**
-     * Implement jwtConfigurer, giải mã token
-     *
-     * @return
-     */
-    @Bean
-    public JwtDecoder jwtDecoder(){
-        //Tạo khóa
-        SecretKeySpec secretKeySpec = new SecretKeySpec(signerKey.getBytes(), "HS512");
-
-        return NimbusJwtDecoder.
-                withSecretKey(secretKeySpec)
-                .macAlgorithm(MacAlgorithm.HS512)
-                .build();
-    };
+//    /**
+//     * Implement jwtConfigurer, giải mã token
+//     *
+//     * @return
+//     */
+//    @Bean
+//    public JwtDecoder jwtDecoder(){
+//        //Tạo khóa
+//        SecretKeySpec secretKeySpec = new SecretKeySpec(signerKey.getBytes(), "HS512");
+//
+//        return NimbusJwtDecoder.
+//                withSecretKey(secretKeySpec)
+//                .macAlgorithm(MacAlgorithm.HS512)
+//                .build();
+//    };
 
     /**
      * chuyển đổi JWT thành Authentication
