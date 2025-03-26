@@ -20,7 +20,7 @@ public class UserAccount {
     private String password;
 
     @ToString.Exclude
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "c_id")
     private Customer c;
 

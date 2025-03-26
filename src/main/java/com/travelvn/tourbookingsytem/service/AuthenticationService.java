@@ -11,6 +11,8 @@ import com.travelvn.tourbookingsytem.dto.request.RefreshTokenRequest;
 import com.travelvn.tourbookingsytem.dto.request.UserAccountRequest;
 import com.travelvn.tourbookingsytem.dto.response.AuthenticationResponse;
 import com.travelvn.tourbookingsytem.dto.response.IntrospectResponse;
+import com.travelvn.tourbookingsytem.dto.response.PersonResponse;
+import com.travelvn.tourbookingsytem.dto.response.UserAccountResponse;
 import com.travelvn.tourbookingsytem.enums.Role;
 import com.travelvn.tourbookingsytem.exception.AppException;
 import com.travelvn.tourbookingsytem.exception.ErrorCode;
@@ -71,7 +73,7 @@ public class AuthenticationService {
      * Kiểm tra đăng nhập
      *
      * @param userAccountRequest Tài khoản đăng nhập
-     * @return Kết quả đăng nhập
+     * @return Kết quả đăng nhập - token
      */
     public AuthenticationResponse authenticate(UserAccountRequest userAccountRequest) {
         var user = userAccountRepository.findById(userAccountRequest.getUsername())
@@ -83,11 +85,34 @@ public class AuthenticationService {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
 
-        var token = generateToken(userAccountMapper.toUserAccount(userAccountRequest));
+        UserAccount userAccount = userAccountMapper.toUserAccount(userAccountRequest);
+        var token = generateToken(userAccount);
 
         return AuthenticationResponse.builder()
-                .token(token)
+//                .token(token)
+                .fullname(getFullName(user))
                 .build();
+    }
+
+    /**
+     * Lấy fullname
+     *
+     * @param userAccount Tài khoản người dùng
+     * @return Tên đầy đủ của họ
+     */
+    private String getFullName(UserAccount userAccount) {
+        String fullname = "";
+        log.info("Có null không: {}", userAccount.getC()==null);
+        if(userAccount.getC()!=null){
+            fullname = userAccount.getC().getFirstname() + " " + userAccount.getC().getLastname();
+        } else if(userAccount.getTourOperator()!=null){
+            fullname = userAccount.getTourOperator().getFirstname() + " " + userAccount.getTourOperator().getLastname();
+        } else if(userAccount.getTourGuide()!=null){
+            fullname = userAccount.getTourGuide().getFirstname() + " " + userAccount.getTourGuide().getLastname();
+        } else if(userAccount.getAdministrator()!=null){
+            fullname = "Admin";
+        }
+        return fullname;
     }
 
     /**
@@ -230,12 +255,16 @@ public class AuthenticationService {
 
             Date expiryTime = signToken.getJWTClaimsSet().getExpirationTime();
 
+            log.info("DATETIME: {}", expiryTime.toInstant());
+
             invalidatedTokenRepository.save(InvalidatedToken.builder()
                             .tokenId(jit)
-                            .expiryDate(expiryTime)
+                            .expiryDate(expiryTime.toInstant())
                             .build());
         }catch(AppException e){
             log.info("Token already expired");
+        } catch (Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -262,7 +291,7 @@ public class AuthenticationService {
 
         invalidatedTokenRepository.save(InvalidatedToken.builder()
                 .tokenId(jit)
-                .expiryDate(expiryTime)
+                .expiryDate(expiryTime.toInstant())
                 .build());
 
         var username = signJWT.getJWTClaimsSet().getSubject();
@@ -275,6 +304,7 @@ public class AuthenticationService {
 
         return AuthenticationResponse.builder()
                 .token(token)
+                .fullname(getFullName(user))
                 .build();
 
     }

@@ -1,6 +1,7 @@
 package com.travelvn.tourbookingsytem.service;
 
 import com.travelvn.tourbookingsytem.dto.request.UserAccountRequest;
+import com.travelvn.tourbookingsytem.dto.response.AuthenticationResponse;
 import com.travelvn.tourbookingsytem.dto.response.UserAccountResponse;
 import com.travelvn.tourbookingsytem.exception.AppException;
 import com.travelvn.tourbookingsytem.exception.ErrorCode;
@@ -8,11 +9,13 @@ import com.travelvn.tourbookingsytem.mapper.UserAccountMapper;
 import com.travelvn.tourbookingsytem.model.UserAccount;
 import com.travelvn.tourbookingsytem.repository.UserAccountRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class UserAccountService {
@@ -30,12 +33,23 @@ public class UserAccountService {
      * @return Kết quả lưu tài khoản
      */
     public boolean addUserAccount(UserAccountRequest userAccountRequest) {
+        log.info("Service");
+
         UserAccount userAccount = userAccountMapper.toUserAccount(userAccountRequest);
         if (userAccountRepository.findById(userAccount.getUsername()).isPresent()){
             throw new AppException(ErrorCode.USERACCOUNT_EXISTED);
         }
+
+        log.info("UserAccount: {}", userAccount);
+        log.info("Customer: {}", userAccount.getC());
         userAccount.setPassword(passwordEncoder.encode(userAccountRequest.getPassword()));
-        userAccountRepository.save(userAccount);
+        try{
+            userAccountRepository.save(userAccount);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+        log.info("AfterSave");
         return true;
     }
 
@@ -65,6 +79,6 @@ public class UserAccountService {
         UserAccount account = userAccountRepository.findById(name)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
-        return userAccountMapper.toUserAccountResponseWithoutCustomer(account);
+        return userAccountMapper.toUserAccountResponse(account);
     }
 }

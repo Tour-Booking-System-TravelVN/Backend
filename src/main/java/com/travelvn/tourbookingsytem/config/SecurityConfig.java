@@ -1,9 +1,6 @@
 package com.travelvn.tourbookingsytem.config;
 
-import com.travelvn.tourbookingsytem.enums.Role;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -11,15 +8,15 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.JwtEncoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
-import javax.crypto.spec.SecretKeySpec;
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -46,7 +43,19 @@ public class SecurityConfig {
 //    @ConditionalOnProperty(prefix = "spring",
 //        value = "datasource.driverClassName",
 //        havingValue = "com.mysql.cj.jdbc.Driver")
-    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity httpSecurity, JwtAuthenticationFilter jwtFilter) throws Exception {
+
+        httpSecurity.cors(cors -> cors.configurationSource(request -> {
+            CorsConfiguration config = new CorsConfiguration();
+            config.setAllowedOrigins(Arrays.asList(
+                    "http://localhost:5500",
+                    "http://127.0.0.1:5500"
+            ));
+            config.addAllowedHeader("*");
+            config.addAllowedMethod("*");
+            config.setAllowCredentials(true); //Bỏ comment nếu cần thiết
+            return config;
+        }));
 
         //Xác định filter cho các api
         //Có ví dụ chỉ có khách hàng mới được đăng ký -> thử thôi chưa đăng ký biết ai là khách hàng
@@ -65,6 +74,8 @@ public class SecurityConfig {
 
         //Chống tấn công XSS - Tạm bỏ - Khi lập trình FE nhớ bật lại
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
+
+        httpSecurity.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return httpSecurity.build();
     }
@@ -104,4 +115,29 @@ public class SecurityConfig {
 
         return converter;
     }
+
+//    @Bean
+//    public CorsFilter corsFilter(){
+//        CorsConfiguration config = new CorsConfiguration();
+//
+//        // Chỉ định nguồn gốc (Frontend)
+//        config.setAllowedOrigins(Arrays.asList(
+//                "http://localhost:5500",
+//                "http://127.0.0.1:5500"
+//        ));
+//
+//        // Cho phép tất cả các method (GET, POST, PUT, DELETE, ...)
+//        config.addAllowedMethod("*");
+//
+//        // Cho phép tất cả các header
+//        config.addAllowedHeader("*");
+//
+//        // Cho phép gửi credentials như cookies, Authorization header
+////        config.setAllowCredentials(true);
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", config);
+//
+//        return new CorsFilter(source);
+//    }
 }

@@ -2,21 +2,28 @@ package com.travelvn.tourbookingsytem.controller;
 
 import com.travelvn.tourbookingsytem.dto.request.UserAccountRequest;
 import com.travelvn.tourbookingsytem.dto.response.ApiResponse;
+import com.travelvn.tourbookingsytem.dto.response.AuthenticationResponse;
 import com.travelvn.tourbookingsytem.dto.response.UserAccountResponse;
+import com.travelvn.tourbookingsytem.service.AuthenticationService;
 import com.travelvn.tourbookingsytem.service.UserAccountService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseCookie;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Duration;
+
+@Slf4j
+@RequiredArgsConstructor
 @RestController
 public class UserAccountController {
-    @Autowired
-    private UserAccountService userAccountService;
+    private final UserAccountService userAccountService;
+    private final AuthenticationService authenticationService;
 
     /**
      * Đăng ký tài khoản (Tạo tài khoản)
@@ -28,13 +35,47 @@ public class UserAccountController {
     //@PostAuthorize(...): Kiểm tả quyền sau khi phương thức được gọi chạy xong
     //Ứng dụng postauth.. : cho phép đọc thông tin của mình: "returnObject.username == authentication.name"
 //    @PreAuthorize("hasRole('CUSTOMER')")
+//    @PostMapping("/register")
+//    public ApiResponse<Boolean> register(@RequestBody @Valid UserAccountRequest userAccountRequest) {
+//        ApiResponse<Boolean> apiResponse = new ApiResponse<>();
+//
+//        apiResponse.setResult(userAccountService.addUserAccount(userAccountRequest));
+//
+//        return apiResponse;
+//    }
+
+    /**
+     * API Đăng ký tài khoản
+     *
+     * @param userAccountRequest yêu cầu đăng ký
+     * @return token
+     */
     @PostMapping("/register")
-    public ApiResponse<Boolean> register(@RequestBody @Valid UserAccountRequest userAccountRequest) {
-        ApiResponse<Boolean> apiResponse = new ApiResponse<>();
+    public ApiResponse<AuthenticationResponse> register(@RequestBody @Valid UserAccountRequest userAccountRequest, HttpServletResponse response) {
+        log.info("UserAccountRequest : {}", userAccountRequest);
+        log.info("Before");
+        userAccountService.addUserAccount(userAccountRequest);
 
-        apiResponse.setResult(userAccountService.addUserAccount(userAccountRequest));
+        log.info("After");
 
-        return apiResponse;
+        // Lấy token được tạo sau khi kiểm tra username & password
+        String jwtToken = authenticationService.authenticate(userAccountRequest).getToken();
+
+        // Tạo HttpOnly Cookie
+        ResponseCookie cookie = ResponseCookie.from("token", jwtToken)
+                .httpOnly(true)   // Chặn truy cập từ JavaScript (chống XSS)
+                .secure(true)     // Chỉ gửi qua HTTPS (tắt nếu đang test localhost)
+                .sameSite("Strict")  // Chống CSRF (Chỉ gửi request từ cùng domain)
+                .path("/")        // Cookie áp dụng cho toàn bộ trang
+                .maxAge(Duration.ofDays(7))  // Token có hiệu lực trong 7 ngày
+                .build();
+
+        // Set Cookie vào Response Header
+        response.addHeader("Set-Cookie", cookie.toString());
+
+        return ApiResponse.<AuthenticationResponse>builder()
+                .result(authenticationService.authenticate(userAccountRequest))
+                .build();
     }
 
     /**

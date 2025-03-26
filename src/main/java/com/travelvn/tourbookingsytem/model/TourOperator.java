@@ -18,6 +18,7 @@ import java.util.Set;
 @Table(name = "tour_operator")
 public class TourOperator {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "tour_operator_id", nullable = false)
     private Integer id;
 
