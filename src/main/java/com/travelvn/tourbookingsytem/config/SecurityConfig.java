@@ -12,6 +12,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -26,7 +27,7 @@ public class SecurityConfig {
 
     //Các endpoint được phép gọi khi chưa có token
     private final String[] PUBLIC_ENDPOINTS = {"/login",
-            "/auth/token", "/auth/introspect", "/auth/logout","/auth/refresh","/register"};
+            "/auth/token", "/auth/introspect", "/auth/logout", "/auth/refresh","/register"};
 
     private CustomJwtDecoder jwtDecoder;
 
@@ -53,9 +54,15 @@ public class SecurityConfig {
             ));
             config.addAllowedHeader("*");
             config.addAllowedMethod("*");
+
+            //?
+//            config.addExposedHeader("Set-Cookie");
+
             config.setAllowCredentials(true); //Bỏ comment nếu cần thiết
             return config;
         }));
+
+        httpSecurity.httpBasic((basic) -> basic.securityContextRepository(new HttpSessionSecurityContextRepository()));
 
         //Xác định filter cho các api
         //Có ví dụ chỉ có khách hàng mới được đăng ký -> thử thôi chưa đăng ký biết ai là khách hàng
@@ -116,28 +123,28 @@ public class SecurityConfig {
         return converter;
     }
 
-//    @Bean
-//    public CorsFilter corsFilter(){
-//        CorsConfiguration config = new CorsConfiguration();
-//
-//        // Chỉ định nguồn gốc (Frontend)
-//        config.setAllowedOrigins(Arrays.asList(
-//                "http://localhost:5500",
-//                "http://127.0.0.1:5500"
-//        ));
-//
-//        // Cho phép tất cả các method (GET, POST, PUT, DELETE, ...)
-//        config.addAllowedMethod("*");
-//
-//        // Cho phép tất cả các header
-//        config.addAllowedHeader("*");
-//
-//        // Cho phép gửi credentials như cookies, Authorization header
-////        config.setAllowCredentials(true);
-//
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", config);
-//
-//        return new CorsFilter(source);
-//    }
+    @Bean
+    public CorsFilter corsFilter(){
+        CorsConfiguration config = new CorsConfiguration();
+
+        // Chỉ định nguồn gốc (Frontend)
+        config.setAllowedOrigins(Arrays.asList(
+                "http://localhost:5500",
+                "http://127.0.0.1:5500"
+        ));
+
+        // Cho phép tất cả các method (GET, POST, PUT, DELETE, ...)
+        config.addAllowedMethod("*");
+
+        // Cho phép tất cả các header
+        config.addAllowedHeader("*");
+
+        // Cho phép gửi credentials như cookies, Authorization header
+//        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+
+        return new CorsFilter(source);
+    }
 }

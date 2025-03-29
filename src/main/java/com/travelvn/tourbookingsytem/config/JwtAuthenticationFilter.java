@@ -5,14 +5,19 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.oauth2.server.resource.web.BearerTokenResolver;
+import org.springframework.security.oauth2.server.resource.web.DefaultBearerTokenResolver;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.util.WebUtils;
 
 import java.io.IOException;
 import java.util.Arrays;
 
+@Slf4j
 @Component
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+public class JwtAuthenticationFilter extends OncePerRequestFilter implements BearerTokenResolver {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -36,7 +41,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     public static String extractTokenFromCookie(HttpServletRequest request) {
+        log.info("Request: " + request.getCookies());
         Cookie[] cookies = request.getCookies();
+        log.info("??? "+Arrays.toString(cookies));
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("token")) {
@@ -45,5 +52,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
         return null;
+    }
+
+    @Override
+    public String resolve(HttpServletRequest request) {
+        Cookie cookie = WebUtils.getCookie(request, "token");
+        if (cookie != null)
+            return cookie.getValue();
+        else
+            return new DefaultBearerTokenResolver().resolve(request);
     }
 }

@@ -39,7 +39,7 @@ public class Customer {
     @Column(name = "citizen_id", length = 12)
     private String citizenId;
 
-    @Column(name = "passport", length = 9)
+    @Column(name = "passport", length = 16)
     private String passport;
 
     @Column(name = "phone_number", length = 10)

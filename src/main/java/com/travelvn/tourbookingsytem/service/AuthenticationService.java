@@ -89,7 +89,7 @@ public class AuthenticationService {
         var token = generateToken(userAccount);
 
         return AuthenticationResponse.builder()
-//                .token(token)
+                .token(token)
                 .fullname(getFullName(user))
                 .build();
     }

@@ -52,11 +52,11 @@ public class UserAccountController {
      */
     @PostMapping("/register")
     public ApiResponse<AuthenticationResponse> register(@RequestBody @Valid UserAccountRequest userAccountRequest, HttpServletResponse response) {
-        log.info("UserAccountRequest : {}", userAccountRequest);
-        log.info("Before");
+//        log.info("UserAccountRequest : {}", userAccountRequest);
+//        log.info("Before");
         userAccountService.addUserAccount(userAccountRequest);
 
-        log.info("After");
+//        log.info("After");
 
         // Lấy token được tạo sau khi kiểm tra username & password
         String jwtToken = authenticationService.authenticate(userAccountRequest).getToken();
@@ -65,9 +65,10 @@ public class UserAccountController {
         ResponseCookie cookie = ResponseCookie.from("token", jwtToken)
                 .httpOnly(true)   // Chặn truy cập từ JavaScript (chống XSS)
                 .secure(true)     // Chỉ gửi qua HTTPS (tắt nếu đang test localhost)
-                .sameSite("Strict")  // Chống CSRF (Chỉ gửi request từ cùng domain)
+                .sameSite("None")  // Chống CSRF (Chỉ gửi request từ cùng domain)
                 .path("/")        // Cookie áp dụng cho toàn bộ trang
                 .maxAge(Duration.ofDays(7))  // Token có hiệu lực trong 7 ngày
+                .domain("")
                 .build();
 
         // Set Cookie vào Response Header

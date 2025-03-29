@@ -33,15 +33,15 @@ public class UserAccountService {
      * @return Kết quả lưu tài khoản
      */
     public boolean addUserAccount(UserAccountRequest userAccountRequest) {
-        log.info("Service");
+//        log.info("Service");
 
         UserAccount userAccount = userAccountMapper.toUserAccount(userAccountRequest);
         if (userAccountRepository.findById(userAccount.getUsername()).isPresent()){
             throw new AppException(ErrorCode.USERACCOUNT_EXISTED);
         }
 
-        log.info("UserAccount: {}", userAccount);
-        log.info("Customer: {}", userAccount.getC());
+//        log.info("UserAccount: {}", userAccount);
+//        log.info("Customer: {}", userAccount.getC());
         userAccount.setPassword(passwordEncoder.encode(userAccountRequest.getPassword()));
         try{
             userAccountRepository.save(userAccount);
@@ -49,7 +49,7 @@ public class UserAccountService {
             e.printStackTrace();
         }
 
-        log.info("AfterSave");
+//        log.info("AfterSave");
         return true;
     }
 
