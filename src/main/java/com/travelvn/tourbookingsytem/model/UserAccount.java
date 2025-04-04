@@ -1,5 +1,6 @@
 package com.travelvn.tourbookingsytem.model;
 
+import com.travelvn.tourbookingsytem.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -42,4 +43,7 @@ public class UserAccount {
     @Column(name = "email", nullable = false)
     private String email;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    private Role role;
 }

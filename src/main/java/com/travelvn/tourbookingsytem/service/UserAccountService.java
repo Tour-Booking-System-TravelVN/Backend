@@ -10,10 +10,14 @@ import com.travelvn.tourbookingsytem.model.UserAccount;
 import com.travelvn.tourbookingsytem.repository.UserAccountRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -66,19 +70,50 @@ public class UserAccountService {
         return passwordEncoder.matches(userAccountRequest.getPassword(), user.getPassword());
     }
 
+
     /**
      * Lấy thông tin của mình bằng Security
      * username = name trong token
      *
      * @return Thông tin tài khoản
      */
-    public UserAccountResponse getMyInfo() {
-        var context = SecurityContextHolder.getContext();
-        String name = context.getAuthentication().getName();
-
-        UserAccount account = userAccountRepository.findById(name)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-
-        return userAccountMapper.toUserAccountResponse(account);
+    //Quang anh
+    public List<UserAccount> getAllUserAccounts() {
+        return userAccountRepository.findAll();
     }
+
+    public UserAccount getUserAccountByUsername(String username) {
+        return userAccountRepository.findByUsername(username);
+    }
+
+    public UserAccount createUserAccount(UserAccount userAccount) {
+        // Mã hóa mật khẩu trước khi lưu
+        userAccount.setPassword(passwordEncoder.encode(userAccount.getPassword()));
+        return userAccountRepository.save(userAccount);
+    }
+
+    public UserAccount updateUserAccount(String username, UserAccount userAccountDetails) {
+        Optional<UserAccount> userAccountOptional = userAccountRepository.findById(username);
+        if (userAccountOptional.isPresent()) {
+            UserAccount userAccount = userAccountOptional.get();
+            userAccount.setEmail(userAccountDetails.getEmail());
+            userAccount.setStatus(userAccountDetails.getStatus());
+            userAccount.setRole(userAccountDetails.getRole());
+            // Nếu mật khẩu được cập nhật, mã hóa lại
+            if (userAccountDetails.getPassword() != null && !userAccountDetails.getPassword().isEmpty()) {
+                userAccount.setPassword(passwordEncoder.encode(userAccountDetails.getPassword()));
+            }
+            userAccount.setAdministrator(userAccountDetails.getAdministrator());
+            userAccount.setC(userAccountDetails.getC());
+            userAccount.setTourGuide(userAccountDetails.getTourGuide());
+            userAccount.setTourOperator(userAccountDetails.getTourOperator());
+            return userAccountRepository.save(userAccount);
+        }
+        return null;
+    }
+
+    public void deleteUserAccount(String username) {
+        userAccountRepository.deleteById(username);
+    }
+
 }

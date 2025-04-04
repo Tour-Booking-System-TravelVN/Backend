@@ -4,6 +4,7 @@ import com.travelvn.tourbookingsytem.dto.request.UserAccountRequest;
 import com.travelvn.tourbookingsytem.dto.response.ApiResponse;
 import com.travelvn.tourbookingsytem.dto.response.AuthenticationResponse;
 import com.travelvn.tourbookingsytem.dto.response.UserAccountResponse;
+import com.travelvn.tourbookingsytem.model.UserAccount;
 import com.travelvn.tourbookingsytem.service.AuthenticationService;
 import com.travelvn.tourbookingsytem.service.UserAccountService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -11,12 +12,12 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseCookie;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -84,10 +85,49 @@ public class UserAccountController {
      *
      * @return API thông tin của mình
      */
-    @GetMapping("/myInfo")
-    public ApiResponse<UserAccountResponse> getMyInfo() {
-        return ApiResponse.<UserAccountResponse>builder()
-                .result(userAccountService.getMyInfo())
-                .build();
+//    @GetMapping("/myInfo")
+//    public ApiResponse<UserAccountResponse> getMyInfo() {
+//        return ApiResponse.<UserAccountResponse>builder()
+//                .result(userAccountService.getMyInfo())
+//                .build();
+//    }
+//Quang anh
+@GetMapping
+@PreAuthorize("hasRole('ROLE_ADMIN')")
+public ResponseEntity<List<UserAccount>> getAllUserAccounts() {
+    return ResponseEntity.ok(userAccountService.getAllUserAccounts());
+}
+
+    @GetMapping("/{username}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<UserAccount> getUserAccountByUsername(@PathVariable String username) {
+        UserAccount userAccount = userAccountService.getUserAccountByUsername(username);
+        if (userAccount != null) {
+            return ResponseEntity.ok(userAccount);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @PostMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<UserAccount> createUserAccount(@Valid @RequestBody UserAccount userAccount) {
+        return ResponseEntity.ok(userAccountService.createUserAccount(userAccount));
+    }
+
+    @PutMapping("/{username}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<UserAccount> updateUserAccount(@PathVariable String username, @Valid @RequestBody UserAccount userAccountDetails) {
+        UserAccount updatedUserAccount = userAccountService.updateUserAccount(username, userAccountDetails);
+        if (updatedUserAccount != null) {
+            return ResponseEntity.ok(updatedUserAccount);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("/{username}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<Void> deleteUserAccount(@PathVariable String username) {
+        userAccountService.deleteUserAccount(username);
+        return ResponseEntity.noContent().build();
     }
 }

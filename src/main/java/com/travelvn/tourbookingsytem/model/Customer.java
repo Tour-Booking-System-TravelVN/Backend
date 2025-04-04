@@ -2,7 +2,9 @@ package com.travelvn.tourbookingsytem.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -15,7 +17,7 @@ import java.util.Set;
 @ToString
 @Entity
 @Table(name = "customer")
-public class Customer {
+public class    Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "c_id", nullable = false)

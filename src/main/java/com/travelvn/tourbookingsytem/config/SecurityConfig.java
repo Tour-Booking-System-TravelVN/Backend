@@ -69,6 +69,13 @@ public class SecurityConfig {
         httpSecurity.authorizeHttpRequests(request ->
                 request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
 //                        .requestMatchers(HttpMethod.POST, "/auth/refresh").hasRole(Role.CUSTOMER.name())
+                        .requestMatchers(HttpMethod.GET, "/myInfo").authenticated() // Yêu cầu đăng nhập để xem thông tin cá nhân
+                        .requestMatchers("/api/admin/user-accounts/**").hasAuthority("ADMINISTRATOR") // Quản lý tài khoản hệ thống
+                        .requestMatchers("/api/admin/employees/**").hasAuthority("ADMINISTRATOR") // Quản lý thông tin nhân viên + báo cáo thống kê
+                        .requestMatchers("/api/admin/tour-ratings/**").hasAuthority("ADMINISTRATOR") // Duyệt đánh giá
+                        .requestMatchers("/api/admin/me/**").hasAuthority("ADMINISTRATOR") // Quản lý thông tin tài khoản cá nhân
+                        .requestMatchers("/api/admin/customers/**").hasAuthority("ADMINISTRATOR") // Quản lý thông tin khách hàng
+                        .requestMatchers("/api/admin/tours/**").hasAuthority("ADMINISTRATOR") // Quản lý tour
                         .anyRequest().authenticated());
 
         //Authentication Provider
@@ -114,7 +121,8 @@ public class SecurityConfig {
         JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
 
         //Gán phần prefix
-        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
+        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("");
+//Xoá roll do grantedAuth.. tự động thêm ROLE_ phía trước không hợp trong Role
 
         //biến JWT thành đối tượng Authentication
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
