@@ -78,7 +78,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/customers/**").hasAuthority("ADMINISTRATOR") // Quản lý thông tin khách hàng
                         .requestMatchers("/api/tours/**").hasAuthority("ADMINISTRATOR") // Quản lý tour
                         .requestMatchers("/api/reports/**").hasAuthority("ADMINISTRATOR") // Xem báo cáo thống kê
-                            //Phân quyền người điều hành tour
+                            //Phân quyền người điều hành tour lan1
                         .requestMatchers("/api/customers/**").hasAuthority("TOUROPERATOR") // Quản lý thông tin khách hàng
                         .requestMatchers("/api/tours/**").hasAuthority("TOUROPERATOR") // Quản lý tour
                         .requestMatchers("/api/festivals/**").hasAuthority("TOUROPERATOR") // Quản lý lễ hội
