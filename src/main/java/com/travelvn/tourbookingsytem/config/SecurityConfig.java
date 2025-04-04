@@ -69,14 +69,26 @@ public class SecurityConfig {
         httpSecurity.authorizeHttpRequests(request ->
                 request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
 //                        .requestMatchers(HttpMethod.POST, "/auth/refresh").hasRole(Role.CUSTOMER.name())
+                            //Phân quyền administrator
                         .requestMatchers(HttpMethod.GET, "/myInfo").authenticated() // Yêu cầu đăng nhập để xem thông tin cá nhân
-                        .requestMatchers("/api/admin/user-accounts/**").hasAuthority("ADMINISTRATOR") // Quản lý tài khoản hệ thống
-                        .requestMatchers("/api/admin/employees/**").hasAuthority("ADMINISTRATOR") // Quản lý thông tin nhân viên + báo cáo thống kê
-                        .requestMatchers("/api/admin/tour-ratings/**").hasAuthority("ADMINISTRATOR") // Duyệt đánh giá
-                        .requestMatchers("/api/admin/me/**").hasAuthority("ADMINISTRATOR") // Quản lý thông tin tài khoản cá nhân
-                        .requestMatchers("/api/admin/customers/**").hasAuthority("ADMINISTRATOR") // Quản lý thông tin khách hàng
-                        .requestMatchers("/api/admin/tours/**").hasAuthority("ADMINISTRATOR") // Quản lý tour
+                        .requestMatchers("/api/user-accounts/**").hasAuthority("ADMINISTRATOR") // Quản lý tài khoản hệ thống
+                        .requestMatchers("/api/employees/**").hasAuthority("ADMINISTRATOR") // Quản lý thông tin nhân viên
+                        .requestMatchers("/api/tour-ratings/**").hasAuthority("ADMINISTRATOR") // Duyệt đánh giá
+                        .requestMatchers("/api/me/**").hasAuthority("ADMINISTRATOR") // Quản lý thông tin tài khoản cá nhân
+                        .requestMatchers("/api/customers/**").hasAuthority("ADMINISTRATOR") // Quản lý thông tin khách hàng
+                        .requestMatchers("/api/tours/**").hasAuthority("ADMINISTRATOR") // Quản lý tour
+                        .requestMatchers("/api/reports/**").hasAuthority("ADMINISTRATOR") // Xem báo cáo thống kê
+                            //Phân quyền người điều hành tour
+                        .requestMatchers("/api/customers/**").hasAuthority("TOUROPERATOR") // Quản lý thông tin khách hàng
+                        .requestMatchers("/api/tours/**").hasAuthority("TOUROPERATOR") // Quản lý tour
+                        .requestMatchers("/api/festivals/**").hasAuthority("TOUROPERATOR") // Quản lý lễ hội
+                        .requestMatchers("/api/discounts/**").hasAuthority("TOUROPERATOR") // Quản lý chương trình giảm giá
+                        .requestMatchers("/api/tour-operator/me/**").hasAuthority("TOUROPERATOR") // Quản lý thông tin cá nhân
+                        .requestMatchers("/api/tour-cancellations/**").hasAuthority("TOUROPERATOR") // Duyệt yêu cầu hủy tour
+                        .requestMatchers("/api/employees/tour-guides/**").hasAuthority("TOUROPERATOR") // Xem và tìm kiếm hướng dẫn viên du lịch
+
                         .anyRequest().authenticated());
+
 
         //Authentication Provider
         httpSecurity.oauth2ResourceServer(oauth2 ->

@@ -92,7 +92,7 @@ public class UserAccountController {
 //                .build();
 //    }
 //Quang anh
-@GetMapping
+@GetMapping("/api/user-accounts")
 @PreAuthorize("hasRole('ROLE_ADMIN')")
 public ResponseEntity<List<UserAccount>> getAllUserAccounts() {
     return ResponseEntity.ok(userAccountService.getAllUserAccounts());
