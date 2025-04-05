@@ -27,9 +27,9 @@ public class SecurityConfig {
 
     //Các endpoint được phép gọi khi chưa có token
     private final String[] PUBLIC_ENDPOINTS = {"/login",
-            "/auth/token", "/auth/introspect", "/auth/logout", "/auth/refresh","/register"};
+            "/auth/token","/auth/tokenapp", "/auth/introspect", "/auth/logout", "/auth/refresh","/register"};
 
-    private CustomJwtDecoder jwtDecoder;
+    private final CustomJwtDecoder jwtDecoder;
 
     /**
      * Lọc xem có cho phép gọi API

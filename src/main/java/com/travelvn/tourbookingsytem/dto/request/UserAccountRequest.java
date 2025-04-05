@@ -1,6 +1,7 @@
 package com.travelvn.tourbookingsytem.dto.request;
 
 import com.travelvn.tourbookingsytem.exception.ErrorCode;
+import com.travelvn.tourbookingsytem.validator.EmailConstraint;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -30,5 +31,6 @@ public class UserAccountRequest {
 
     private String status;
 
+    @EmailConstraint(message = "INVALID_EMAIL")
     private String email;
 }

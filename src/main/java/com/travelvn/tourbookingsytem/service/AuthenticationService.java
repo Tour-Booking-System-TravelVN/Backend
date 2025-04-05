@@ -85,12 +85,13 @@ public class AuthenticationService {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
 
-        UserAccount userAccount = userAccountMapper.toUserAccount(userAccountRequest);
-        var token = generateToken(userAccount);
+//        UserAccount userAccount = userAccountMapper.toUserAccount(userAccountRequest);
+        var token = generateToken(user);
 
         return AuthenticationResponse.builder()
                 .token(token)
                 .fullname(getFullName(user))
+                .role(buildScope(user))
                 .build();
     }
 
@@ -102,7 +103,7 @@ public class AuthenticationService {
      */
     private String getFullName(UserAccount userAccount) {
         String fullname = "";
-        log.info("Có null không: {}", userAccount.getC()==null);
+//        log.info("Có null không: {}", userAccount.getC()==null);
         if(userAccount.getC()!=null){
             fullname = userAccount.getC().getFirstname() + " " + userAccount.getC().getLastname();
         } else if(userAccount.getTourOperator()!=null){
@@ -175,6 +176,8 @@ public class AuthenticationService {
             isValid = false;
         }
 
+//        log.info("Flag1");
+
         return IntrospectResponse.builder()
                 .valid(isValid)
                 .build();
@@ -231,6 +234,8 @@ public class AuthenticationService {
         //Xác nhận token
         var verified = signedJWT.verify(verifier);
 
+//        log.info(("Flag2"));
+
         if(!(verified && expirationTime.after(new Date())))
             throw new AppException(ErrorCode.UNAUTHENTICATED);
 
@@ -255,7 +260,7 @@ public class AuthenticationService {
 
             Date expiryTime = signToken.getJWTClaimsSet().getExpirationTime();
 
-            log.info("DATETIME: {}", expiryTime.toInstant());
+//            log.info("DATETIME: {}", expiryTime.toInstant());
 
             invalidatedTokenRepository.save(InvalidatedToken.builder()
                             .tokenId(jit)
@@ -305,6 +310,7 @@ public class AuthenticationService {
         return AuthenticationResponse.builder()
                 .token(token)
                 .fullname(getFullName(user))
+                .role(buildScope(user))
                 .build();
 
     }

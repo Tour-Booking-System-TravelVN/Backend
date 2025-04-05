@@ -17,6 +17,12 @@ public enum ErrorCode {
     UNAUTHENTICATED(1006,"Unauthenticated", HttpStatus.UNAUTHORIZED), //401
     UNAUTHORIZED(1007,"You do not have permission", HttpStatus.FORBIDDEN), //403
     INVALID_DOB(1008, "Your age must be least at {min}", HttpStatus.BAD_REQUEST),
+
+    INVALID_FIRSTNAME(1009, "Họ và họ đệm chỉ chứa ký tự chữ và dấu cách.", HttpStatus.BAD_REQUEST),
+    INVALID_LASTNAME(1010, "Tên chỉ chứa ký tự chữ.", HttpStatus.BAD_REQUEST),
+    INVALID_EMAIL(1011, "Email không hợp lệ.", HttpStatus.BAD_REQUEST),
+    INVALID_PHONENUMBER(1012, "Số điện thoại không hợp lệ.", HttpStatus.BAD_REQUEST),
+    INVALID_CI(1013, "Số căn cước công dân không hợp lệ.", HttpStatus.BAD_REQUEST),
     ;
 
     private int code;

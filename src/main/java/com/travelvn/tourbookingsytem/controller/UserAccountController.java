@@ -58,8 +58,9 @@ public class UserAccountController {
 
 //        log.info("After");
 
+        AuthenticationResponse authenticationResponse = authenticationService.authenticate(userAccountRequest);
         // Lấy token được tạo sau khi kiểm tra username & password
-        String jwtToken = authenticationService.authenticate(userAccountRequest).getToken();
+        String jwtToken = authenticationResponse.getToken();
 
         // Tạo HttpOnly Cookie
         ResponseCookie cookie = ResponseCookie.from("token", jwtToken)
@@ -74,8 +75,30 @@ public class UserAccountController {
         // Set Cookie vào Response Header
         response.addHeader("Set-Cookie", cookie.toString());
 
+        //Xóa token đi
+        authenticationResponse.setToken("");
+
         return ApiResponse.<AuthenticationResponse>builder()
-                .result(authenticationService.authenticate(userAccountRequest))
+                .result(authenticationResponse)
+                .build();
+    }
+
+    /**
+     * API Đăng ký tài khoản app
+     *
+     * @param userAccountRequest yêu cầu đăng ký
+     * @return token
+     */
+    @PostMapping("/registerapp")
+    public ApiResponse<AuthenticationResponse> registerapp(@RequestBody @Valid UserAccountRequest userAccountRequest, HttpServletResponse response) {
+        userAccountService.addUserAccount(userAccountRequest);
+
+//        log.info("After");
+
+        AuthenticationResponse authenticationResponse = authenticationService.authenticate(userAccountRequest);
+
+        return ApiResponse.<AuthenticationResponse>builder()
+                .result(authenticationResponse)
                 .build();
     }
 
