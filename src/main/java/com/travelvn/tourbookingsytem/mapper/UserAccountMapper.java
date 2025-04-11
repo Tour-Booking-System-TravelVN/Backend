@@ -8,6 +8,13 @@ import org.mapstruct.*;
 @Named("UserAccountMapper")
 @Mapper(componentModel = "spring", /*unmappedTargetPolicy = ReportingPolicy.IGNORE,*/ uses = {CustomerMapper.class, AdministatorMapper.class, TourGuideMapper.class, TourOperatorMapper.class})
 public interface UserAccountMapper {
+
+    @Named("toUserAccountEmail")
+    @Mappings({
+            @Mapping(target = "c", ignore = true)
+    })
+    UserAccount toUserAccountEmail(UserAccountRequest userAccountRequest);
+
     UserAccount toUserAccount(UserAccountRequest userAccountRequest);
 //    UserAccount toUserAccount(UserAccountResponse userAccountResponse);
 

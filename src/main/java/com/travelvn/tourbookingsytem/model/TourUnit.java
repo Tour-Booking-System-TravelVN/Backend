@@ -102,4 +102,8 @@ public class TourUnit {
     @ToString.Exclude
     @OneToMany(mappedBy = "tourUnit")
     private Set<Booking> bookingSet = new HashSet<>();
+
+    @ToString.Exclude
+    @OneToMany(mappedBy = "tourUnit")
+    private Set<TourRating> tourRatingSet = new HashSet<>();
 }

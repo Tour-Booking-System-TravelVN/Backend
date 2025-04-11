@@ -2,9 +2,12 @@ package com.travelvn.tourbookingsytem;
 
 import com.travelvn.tourbookingsytem.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import vn.payos.PayOS;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -17,6 +20,20 @@ import java.util.concurrent.TimeUnit;
 public class TourbookingsytemApplication {
 
 //	private static AuthenticationService authenticationService;
+
+	@Value("${PAYOS_CLIENT_ID}")
+	private String clientId;
+
+	@Value("${PAYOS_API_KEY}")
+	private String apiKey;
+
+	@Value("${PAYOS_CHECKSUM_KEY}")
+	private String checksumKey;
+
+	@Bean
+	public PayOS payOS() {
+		return new PayOS(clientId, apiKey, checksumKey);
+	}
 
 	public static void main(String[] args) {
 		try{

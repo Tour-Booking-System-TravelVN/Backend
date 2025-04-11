@@ -1,6 +1,9 @@
 package com.travelvn.tourbookingsytem.dto.response;
 
+import com.travelvn.tourbookingsytem.model.TourUnit;
 import lombok.*;
+
+import java.util.Set;
 
 @Getter
 @Setter
@@ -18,4 +21,5 @@ public class FestivalResponse {
 
     private Boolean displayStatus = false;
 
+//    private Set<TourUnitResponse> tourUnitSet;
 }

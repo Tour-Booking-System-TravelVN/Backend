@@ -1,8 +1,11 @@
 package com.travelvn.tourbookingsytem.dto.response;
 
+import com.travelvn.tourbookingsytem.model.Image;
+import com.travelvn.tourbookingsytem.model.TourProgram;
 import lombok.*;
 
 import java.time.Instant;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -15,7 +18,7 @@ public class TourResponse {
 
     private String tourId;
 
-    private CatergoryResponse category;
+    private CategoryResponse category;
 
     private TourOperatorResponse tourOperator;
 
@@ -47,4 +50,11 @@ public class TourResponse {
 
     private String exclusions;
 
+    private Set<TourProgram> tourProgramSet;
+
+    private Set<ImageResponse> imageSet;
+
+//    private Set<TourUnitResponse> tourUnitSet;
+
+    private String firstImageUrl; // Thêm trường này để chứa URL của ảnh đầu tiên
 }

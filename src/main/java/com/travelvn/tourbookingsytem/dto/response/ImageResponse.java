@@ -15,6 +15,6 @@ public class ImageResponse {
 
     private String url;
 
-    private TourResponse tour;
+//    private TourResponse tour;
 
 }

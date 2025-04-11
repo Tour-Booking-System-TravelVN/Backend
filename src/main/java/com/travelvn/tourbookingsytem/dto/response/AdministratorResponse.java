@@ -2,6 +2,9 @@ package com.travelvn.tourbookingsytem.dto.response;
 
 import lombok.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -11,5 +14,9 @@ import lombok.*;
 public class AdministratorResponse {
 
     private Integer id;
+
+//    private UserAccountResponse userAccount;
+//
+//    private Set<TourRatingResponse> tourRatingSet = new HashSet<>();
 
 }

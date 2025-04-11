@@ -1,10 +1,15 @@
 package com.travelvn.tourbookingsytem.dto.response;
 
+import com.travelvn.tourbookingsytem.model.Booking;
+import com.travelvn.tourbookingsytem.model.Guide;
+import com.travelvn.tourbookingsytem.model.TourRating;
 import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -59,4 +64,9 @@ public class TourUnitResponse {
 
     private BigDecimal totalAdditionalCost;
 
+//    private Set<Guide> guideSet;
+
+//    private Set<Booking> bookingSet;
+
+//    private Set<TourRating> tourRatingSet;
 }

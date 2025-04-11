@@ -14,6 +14,6 @@ public class CompanionCustomerResponse {
 
     private BookingResponse booking;
 
-    private CustomerResponse c;
+//    private CustomerResponse c;
 
 }

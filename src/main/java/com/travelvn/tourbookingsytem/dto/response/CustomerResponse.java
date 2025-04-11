@@ -2,11 +2,16 @@ package com.travelvn.tourbookingsytem.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.travelvn.tourbookingsytem.dto.request.UserAccountRequest;
+import com.travelvn.tourbookingsytem.model.Booking;
+import com.travelvn.tourbookingsytem.model.CompanionCustomer;
+import com.travelvn.tourbookingsytem.model.TourRating;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Setter
 @Getter
@@ -30,4 +35,11 @@ public class CustomerResponse extends PersonResponse{
 
     @JsonProperty
     UserAccountResponse userAccount;
+
+//    Set<Booking> bookingSet = new HashSet<>();
+//
+//    Set<CompanionCustomer> companionCustomerSet = new HashSet<>();
+//
+//    Set<TourRating> tourRatingSet = new HashSet<>();
+
 }

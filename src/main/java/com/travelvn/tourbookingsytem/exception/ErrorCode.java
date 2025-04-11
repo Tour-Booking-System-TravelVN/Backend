@@ -23,6 +23,23 @@ public enum ErrorCode {
     INVALID_EMAIL(1011, "Email không hợp lệ.", HttpStatus.BAD_REQUEST),
     INVALID_PHONENUMBER(1012, "Số điện thoại không hợp lệ.", HttpStatus.BAD_REQUEST),
     INVALID_CI(1013, "Số căn cước công dân không hợp lệ.", HttpStatus.BAD_REQUEST),
+    INVALID_DEPARTURE_DATE(1014, "Ngày xuất phát không hợp lệ.", HttpStatus.BAD_REQUEST),
+
+    INVALID_BOOKING_ID(1015, "Mã đặt tour gồm 20 ký tự", HttpStatus.BAD_REQUEST),
+    NO_SPACE_BOOKING(1016, "Tour không còn chỗ trống", HttpStatus.BAD_REQUEST),
+    MULTI_HOLDING(1017, "Bạn đã đặt nhiều tour hôm nay nhưng không thanh toán. Hãy quay lại vào ngày mai nhé.", HttpStatus.BAD_REQUEST),
+    BOOKING_ORDER_CODE_NOT_EXISTED(1018, "Không thấy mã đặt tour", HttpStatus.NOT_FOUND),
+
+    TOURUNIT_NOT_EXISTED(2000,"Không tìm thấy đơn vị tour.", HttpStatus.NOT_FOUND),
+    BOOKING_TIME_CONFLICT(2001, "Thời gian tour diễn ra xung đột với tour của bạn.", HttpStatus.BAD_REQUEST),
+    BOOKING_SYSTEM_CONFLICT(2002, "Xin chào,\n" +
+            "\n" +
+            "Rất tiếc, tour mà bạn chọn hiện đã hết chỗ tại thời điểm thanh toán.\n" +
+            "Số tiền bạn đã thanh toán sẽ được hoàn lại trong thời gian sớm nhất.\n" +
+            "\n" +
+            "Chúng tôi thành thật xin lỗi về sự bất tiện này.", HttpStatus.BAD_REQUEST),
+    PAYMENT_ID_EXISTED(2003,"Mã thanh toán không hợp lệ.", HttpStatus.BAD_REQUEST),
+    INVALID_PAYMENT_AMOUNT(2004,"Tổng tiền thanh toán không hợp lệ", HttpStatus.BAD_REQUEST),
     ;
 
     private int code;

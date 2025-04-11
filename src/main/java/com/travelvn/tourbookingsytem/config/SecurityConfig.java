@@ -1,5 +1,6 @@
 package com.travelvn.tourbookingsytem.config;
 
+import com.travelvn.tourbookingsytem.enums.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,7 +28,17 @@ public class SecurityConfig {
 
     //Các endpoint được phép gọi khi chưa có token
     private final String[] PUBLIC_ENDPOINTS = {"/login",
-            "/auth/token","/auth/tokenapp", "/auth/introspect", "/auth/logout", "/auth/refresh","/register"};
+            "/auth/token", "/auth/tokenapp", "/auth/introspect", "/auth/logout", "/auth/refresh", "/register", "/tour/foundtourlist", "/tourunit/foundtourlist", "/registerapp",
+            "/payment/**"};
+
+    //Các endpoint được phép gọi khi chưa có token với phương thức GET
+    private final String[] PUBLIC_GET_ENDPOINTS = {"/tourunit/foundtourlist"/*, "/order/**"*/};
+
+    //Các endpoint GET của khách hàng
+    private final String[] CUSTOMER_GET_ENDPOINTS = {"/booking/checkbeforebooking", "/booking/*"};
+
+    //Các endpoint POST của khách hàng
+    private final String[] CUSTOMER_POST_ENDPOINTS = {/*"booking/booktour"*/"/order/create"};
 
     private final CustomJwtDecoder jwtDecoder;
 
@@ -68,14 +79,17 @@ public class SecurityConfig {
         //Có ví dụ chỉ có khách hàng mới được đăng ký -> thử thôi chưa đăng ký biết ai là khách hàng
         httpSecurity.authorizeHttpRequests(request ->
                 request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
+                        .requestMatchers(HttpMethod.GET, PUBLIC_GET_ENDPOINTS).permitAll()
+                        .requestMatchers(HttpMethod.GET, CUSTOMER_GET_ENDPOINTS).hasRole(Role.CUSTOMER.name())
+                        .requestMatchers(HttpMethod.POST, CUSTOMER_POST_ENDPOINTS).hasRole(Role.CUSTOMER.name())
 //                        .requestMatchers(HttpMethod.POST, "/auth/refresh").hasRole(Role.CUSTOMER.name())
                         .anyRequest().authenticated());
 
         //Authentication Provider
         httpSecurity.oauth2ResourceServer(oauth2 ->
                 oauth2.jwt(jwtConfigurer ->
-                        jwtConfigurer.decoder(jwtDecoder)
-                                .jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                                jwtConfigurer.decoder(jwtDecoder)
+                                        .jwtAuthenticationConverter(jwtAuthenticationConverter()))
                         .authenticationEntryPoint(new JWTAuthenticationEntryPoint())
         );
 
@@ -109,7 +123,7 @@ public class SecurityConfig {
      * @return Authentication
      */
     @Bean
-    JwtAuthenticationConverter jwtAuthenticationConverter(){
+    JwtAuthenticationConverter jwtAuthenticationConverter() {
         //Tạo một đối tượng giúp trích xuất quyền từ JWT.
         JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
 
@@ -124,7 +138,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public CorsFilter corsFilter(){
+    public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
 
         // Chỉ định nguồn gốc (Frontend)

@@ -59,8 +59,8 @@ public class Tour {
     @Column(name = "ideal_time", nullable = false)
     private String idealTime;
 
-    @Lob
-    @Column(name = "description")
+//    @Lob
+    @Column(name = "description", length = 65535)
     private String description;
 
     @Column(name = "created_time", nullable = false)
@@ -70,11 +70,11 @@ public class Tour {
     private Instant lastUpdatedTime;
 
     @Lob
-    @Column(name = "inclusions", nullable = false)
+    @Column(name = "inclusions", columnDefinition = "TEXT", nullable = false)
     private String inclusions;
 
     @Lob
-    @Column(name = "exclusions", nullable = false)
+    @Column(name = "exclusions", columnDefinition = "TEXT", nullable = false)
     private String exclusions;
 
     @ToString.Exclude

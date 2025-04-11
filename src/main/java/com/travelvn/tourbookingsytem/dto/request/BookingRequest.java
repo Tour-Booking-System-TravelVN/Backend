@@ -1,11 +1,13 @@
 package com.travelvn.tourbookingsytem.dto.request;
 
-import com.travelvn.tourbookingsytem.model.Customer;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 
 @Getter
 @Setter
@@ -15,12 +17,13 @@ import java.time.Instant;
 @ToString
 public class BookingRequest {
 
-    @Size(min = 20, max = 20)
+    @Size(min = 20, max = 20, message = "INVALID_BOOKING_ID")
     private String bookingId;
 
     private CustomerRequest c;
 
-    private TourUnitRequest tourUnit;
+//    private TourUnitRequest tourUnit;
+    private String tourUnitId;
 
     private Instant bookingDate;
 
@@ -32,7 +35,7 @@ public class BookingRequest {
 
     private Byte adultNumber;
 
-    private String status;
+//    private String status;
 
     private String note;
 
@@ -40,4 +43,12 @@ public class BookingRequest {
 
     private BigDecimal totalAmount;
 
+    private Byte privateRoomNumber;
+
+    private Long orderCode;
+
+    private Long expiredAt;
+
+    @JsonProperty("companions")
+    private List<CompanionCustomerRequest> companions;
 }

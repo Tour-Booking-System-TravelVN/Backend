@@ -1,10 +1,11 @@
 package com.travelvn.tourbookingsytem.model;
 
+import com.travelvn.tourbookingsytem.model.generator.BookingIdGenerator;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
@@ -20,6 +21,8 @@ import java.util.Set;
 public class Booking {
     @Id
     @Column(name = "booking_id", nullable = false, length = 10)
+    @GeneratedValue(generator = "booking_id")
+    @GenericGenerator(name = "booking_id", type = BookingIdGenerator.class)
     private String bookingId;
 
     @ToString.Exclude
@@ -55,12 +58,21 @@ public class Booking {
     private String note;
 
     @Column(name = "payment_id")
-    private String payment_id;
+    private String paymentId;
 
     @Column(name = "total_amount", nullable = false, precision = 19, scale = 3)
     private BigDecimal totalAmount;
 
+    @Column(name = "order_code")
+    private Long orderCode;
+
+    @Column(name = "expired_at")
+    private Long expiredAt;
+
+    @Column(name = "private_room_number", nullable = false)
+    private Byte privateRoomNumber;
+
     @ToString.Exclude
-    @OneToMany(mappedBy = "booking")
+    @OneToMany(mappedBy = "booking", cascade = {CascadeType.REMOVE})
     private Set<CompanionCustomer> companionCustomerSet = new HashSet<>();
 }

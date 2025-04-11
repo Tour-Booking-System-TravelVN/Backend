@@ -9,9 +9,9 @@ import lombok.*;
 @Builder
 @ToString
 public class CompanionCustomerRequest {
-    private Integer id;
+//    private Integer id;
 
-    private BookingRequest booking;
+//    private BookingRequest booking;
 
     private CustomerRequest c;
 

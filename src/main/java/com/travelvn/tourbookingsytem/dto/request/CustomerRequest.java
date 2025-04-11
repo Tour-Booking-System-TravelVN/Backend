@@ -55,5 +55,6 @@ public class CustomerRequest {
     @Size(min = 6, max = 255)
     @JsonProperty("address")
     private String address;
-//    private UserAccountRequest userAccount;
+
+    private UserAccountRequest userAccount;
 }

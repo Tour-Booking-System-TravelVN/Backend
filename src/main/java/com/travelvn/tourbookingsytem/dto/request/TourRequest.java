@@ -15,7 +15,7 @@ public class TourRequest {
 
     private String tourId;
 
-    private CatergoryRequest category;
+    private CategoryRequest category;
 
     private TourOperatorRequest tourOperator;
 

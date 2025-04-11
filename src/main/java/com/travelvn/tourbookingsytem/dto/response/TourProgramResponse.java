@@ -12,7 +12,7 @@ public class TourProgramResponse {
 
     private Integer id;
 
-    private TourResponse tour;
+//    private TourResponse tour;
 
     private String locations;
 

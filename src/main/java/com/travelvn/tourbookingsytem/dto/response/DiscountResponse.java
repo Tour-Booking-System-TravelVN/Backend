@@ -1,8 +1,10 @@
 package com.travelvn.tourbookingsytem.dto.response;
 
+import com.travelvn.tourbookingsytem.model.TourUnit;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -18,5 +20,7 @@ public class DiscountResponse {
     private BigDecimal discountValue;
 
     private String discountUnit;
+
+//    private Set<TourUnitResponse> tourUnitSet;
 
 }

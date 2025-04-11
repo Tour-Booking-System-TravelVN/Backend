@@ -15,7 +15,7 @@ import java.time.LocalDate;
 
 public class TourUnitRequest {
 
-    private String tourUnitId;
+    private int tourUnitId;
 
     private FestivalRequest festival;
 
