@@ -1,13 +1,11 @@
 package com.travelvn.tourbookingsytem.controller;
 
-
 import com.travelvn.tourbookingsytem.model.Tour;
 import com.travelvn.tourbookingsytem.service.TourService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -23,7 +21,7 @@ public class TourController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Tour> getTourById(@PathVariable Integer id) {
+    public ResponseEntity<Tour> getTourById(@PathVariable String id) {
         Tour tour = tourService.getTourById(id);
         if (tour != null) {
             return ResponseEntity.ok(tour);
@@ -37,7 +35,7 @@ public class TourController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Tour> updateTour(@PathVariable Integer id, @Valid @RequestBody Tour tourDetails) {
+    public ResponseEntity<Tour> updateTour(@PathVariable String id, @Valid @RequestBody Tour tourDetails) {
         Tour updatedTour = tourService.updateTour(id, tourDetails);
         if (updatedTour != null) {
             return ResponseEntity.ok(updatedTour);
@@ -46,7 +44,7 @@ public class TourController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTour(@PathVariable Integer id) {
+    public ResponseEntity<Void> deleteTour(@PathVariable String id) {
         tourService.deleteTour(id);
         return ResponseEntity.noContent().build();
     }

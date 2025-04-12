@@ -1,5 +1,6 @@
 package com.travelvn.tourbookingsytem.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,6 +18,7 @@ import java.util.Set;
 @Table(name = "discount")
 public class Discount {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "discount_id", nullable = false)
     private Integer id;
 
@@ -31,5 +33,6 @@ public class Discount {
 
     @ToString.Exclude
     @OneToMany(mappedBy = "discount")
+    @JsonIgnore
     private Set<TourUnit> tourUnitSet = new HashSet<>();
 }

@@ -1,5 +1,7 @@
 package com.travelvn.tourbookingsytem.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.http.ResponseEntity;
@@ -55,18 +57,22 @@ public class    Customer {
     private String address;
 
     @ToString.Exclude
+    @JsonIgnore
     @OneToOne(mappedBy = "c")
     private UserAccount userAccount;
 
     @ToString.Exclude
+    @JsonIgnore
     @OneToMany(mappedBy = "c")
     private Set<Booking> bookingSet = new HashSet<>();
 
     @ToString.Exclude
     @OneToMany(mappedBy = "c")
+    @JsonIgnore
     private Set<CompanionCustomer> companionCustomerSet = new HashSet<>();
 
     @ToString.Exclude
+    @JsonIgnore
     @OneToMany(mappedBy = "c")
     private Set<TourRating> tourRatingSet = new HashSet<>();
 }

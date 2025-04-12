@@ -22,44 +22,52 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter implements Bea
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-
-        //  Cookie từ request
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            Arrays.stream(cookies)
-                    .filter(cookie -> "token".equals(cookie.getName()))  // Tìm cookie tên "token"
-                    .findFirst()
-                    .ifPresent(cookie -> {
-                        String jwtToken = cookie.getValue();
-                        System.out.println("Token found in Cookie: " + jwtToken);
-
-                        // Xử lý xác thực (Ví dụ: kiểm tra token hợp lệ, load user từ database)
-                    });
+        try {
+            // Lấy Cookie từ request
+            Cookie[] cookies = request.getCookies();
+            if (cookies != null) {
+                Arrays.stream(cookies)
+                        .filter(cookie -> "token".equals(cookie.getName()))
+                        .findFirst()
+                        .ifPresent(cookie -> {
+                            String jwtToken = cookie.getValue();
+                            log.info("Token found in Cookie: {}", jwtToken);
+                            // Xử lý xác thực nếu cần (hiện tại chỉ log)
+                        });
+            }
+            filterChain.doFilter(request, response);
+        } catch (Exception e) {
+            log.error("Error in JwtAuthenticationFilter: {}", e.getMessage(), e);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\": \"Internal server error in authentication filter\"}");
         }
-
-        filterChain.doFilter(request, response);
     }
 
     public static String extractTokenFromCookie(HttpServletRequest request) {
-        log.info("Request: " + request.getCookies());
+        log.info("Extracting token from cookies");
         Cookie[] cookies = request.getCookies();
-        log.info("??? "+Arrays.toString(cookies));
         if (cookies != null) {
+            log.info("Cookies found: {}", Arrays.toString(cookies));
             for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("token")) {
+                if ("token".equals(cookie.getName())) {
+                    log.info("Found token cookie: {}", cookie.getValue());
                     return cookie.getValue();
                 }
             }
         }
+        log.info("No token cookie found");
         return null;
     }
 
     @Override
     public String resolve(HttpServletRequest request) {
         Cookie cookie = WebUtils.getCookie(request, "token");
-        if (cookie != null)
+        if (cookie != null) {
+            log.info("Resolved token from cookie: {}", cookie.getValue());
             return cookie.getValue();
-        else
-            return new DefaultBearerTokenResolver().resolve(request);
+        }
+        log.info("No token in cookie, falling back to DefaultBearerTokenResolver");
+        return new DefaultBearerTokenResolver().resolve(request);
     }
 }

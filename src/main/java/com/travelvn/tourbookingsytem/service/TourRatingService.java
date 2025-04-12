@@ -13,7 +13,7 @@ public class TourRatingService {
     public List<TourRating> getAllRatings() {
         return tourRatingRepository.findAll();
     }
-
+// sua danh gia nam tawng maketting :)))
     public TourRating updateRatingStatus(Integer id, String status) {
         TourRating rating = tourRatingRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Rating not found"));

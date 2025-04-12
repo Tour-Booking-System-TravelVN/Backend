@@ -1,5 +1,6 @@
 package com.travelvn.tourbookingsytem.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,5 +29,6 @@ public class Category {
 
     @ToString.Exclude
     @OneToMany(mappedBy = "category")
+    @JsonIgnore  // Ngăn chặn vòng lặp khi serialize JSON
     private Set<Tour> tourSet = new HashSet<>();
 }

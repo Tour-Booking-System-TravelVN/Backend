@@ -92,14 +92,13 @@ public class UserAccountController {
 //                .build();
 //    }
 //Quang anh
+// da test
 @GetMapping("/api/user-accounts")
-@PreAuthorize("hasRole('ROLE_ADMIN')")
 public ResponseEntity<List<UserAccount>> getAllUserAccounts() {
     return ResponseEntity.ok(userAccountService.getAllUserAccounts());
 }
 
-    @GetMapping("/{username}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/api/user-accounts/{username}")
     public ResponseEntity<UserAccount> getUserAccountByUsername(@PathVariable String username) {
         UserAccount userAccount = userAccountService.getUserAccountByUsername(username);
         if (userAccount != null) {
@@ -108,14 +107,12 @@ public ResponseEntity<List<UserAccount>> getAllUserAccounts() {
         return ResponseEntity.notFound().build();
     }
 
-    @PostMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/api/user-accounts")
     public ResponseEntity<UserAccount> createUserAccount(@Valid @RequestBody UserAccount userAccount) {
         return ResponseEntity.ok(userAccountService.createUserAccount(userAccount));
     }
 
-    @PutMapping("/{username}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("/api/user-accounts/{username}")
     public ResponseEntity<UserAccount> updateUserAccount(@PathVariable String username, @Valid @RequestBody UserAccount userAccountDetails) {
         UserAccount updatedUserAccount = userAccountService.updateUserAccount(username, userAccountDetails);
         if (updatedUserAccount != null) {
@@ -124,8 +121,7 @@ public ResponseEntity<List<UserAccount>> getAllUserAccounts() {
         return ResponseEntity.notFound().build();
     }
 
-    @DeleteMapping("/{username}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @DeleteMapping("/api/user-accounts/{username}")
     public ResponseEntity<Void> deleteUserAccount(@PathVariable String username) {
         userAccountService.deleteUserAccount(username);
         return ResponseEntity.noContent().build();

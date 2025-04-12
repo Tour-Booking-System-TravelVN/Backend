@@ -99,15 +99,10 @@ public class UserAccountService {
             userAccount.setEmail(userAccountDetails.getEmail());
             userAccount.setStatus(userAccountDetails.getStatus());
             userAccount.setRole(userAccountDetails.getRole());
-            // Nếu mật khẩu được cập nhật, mã hóa lại
-            if (userAccountDetails.getPassword() != null && !userAccountDetails.getPassword().isEmpty()) {
-                userAccount.setPassword(passwordEncoder.encode(userAccountDetails.getPassword()));
-            }
-            userAccount.setAdministrator(userAccountDetails.getAdministrator());
-            userAccount.setC(userAccountDetails.getC());
-            userAccount.setTourGuide(userAccountDetails.getTourGuide());
-            userAccount.setTourOperator(userAccountDetails.getTourOperator());
-            return userAccountRepository.save(userAccount);
+//            // Nếu mật khẩu được cập nhật, mã hóa lại
+//            if (userAccountDetails.getPassword() != null && !userAccountDetails.getPassword().isEmpty()) {
+//                userAccount.setPassword(passwordEncoder.encode(userAccountDetails.getPassword()));
+//            }
         }
         return null;
     }

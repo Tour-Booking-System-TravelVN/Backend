@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.Map;
-
+// da test
 @RestController
 @RequestMapping("/api/reports")
 public class ReportController {
@@ -18,7 +18,7 @@ public class ReportController {
     @Autowired
     private ReportService reportService;
 
-    @GetMapping("/summary")
+    @GetMapping()
     public ResponseEntity<Map<String, Object>> getSummaryReport() {
         Map<String, Object> report = new HashMap<>();
         report.put("completedBookings", reportService.getCompletedBookings());

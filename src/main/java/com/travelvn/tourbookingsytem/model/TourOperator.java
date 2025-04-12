@@ -1,5 +1,6 @@
 package com.travelvn.tourbookingsytem.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -57,25 +58,31 @@ public class TourOperator {
 
     @ToString.Exclude
     @OneToMany(mappedBy = "tourOperator")
+    @JsonIgnore
     private Set<Tour> tourCreatedSet = new HashSet<>();
 
     @ToString.Exclude
     @OneToMany(mappedBy = "lastUpdatedOperator")
+    @JsonIgnore
     private Set<Tour> tourUpdatedSet = new HashSet<>();
 
     @ToString.Exclude
     @OneToMany(mappedBy = "tourOperator")
+    @JsonIgnore
     private Set<TourUnit> tourUnitCreatedSet = new HashSet<>();
 
     @ToString.Exclude
     @OneToMany(mappedBy = "lastUpdatedOperator")
+    @JsonIgnore
     private Set<Tour> tourUnitUpdatedSet = new HashSet<>();
 
     @ToString.Exclude
     @OneToMany(mappedBy = "tourOperator")
+    @JsonIgnore
     private Set<Guide> guideSet = new HashSet<>();
 
     @ToString.Exclude
     @OneToOne(mappedBy = "tourOperator")
+    @JsonIgnore
     private UserAccount userAccount;
 }

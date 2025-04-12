@@ -1,8 +1,5 @@
 package com.travelvn.tourbookingsytem.service;
 
-import com.travelvn.tourbookingsytem.dto.request.CustomerRequest;
-import com.travelvn.tourbookingsytem.dto.response.CustomerResponse;
-import com.travelvn.tourbookingsytem.mapper.CustomerMapper;
 import com.travelvn.tourbookingsytem.model.Customer;
 import com.travelvn.tourbookingsytem.repository.CustomerRepository;
 import lombok.experimental.FieldDefaults;
@@ -17,12 +14,10 @@ public class CustomerService {
 
     private CustomerRepository customerRepository;
 
-    private CustomerMapper customerMapper;
-
-    public CustomerService(CustomerRepository customerRepository, CustomerMapper customerMapper){
-        this.customerMapper = customerMapper;
+    public CustomerService(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
     }
+
     public List<Customer> getAllCustomers() {
         return customerRepository.findAll();
     }
@@ -35,6 +30,9 @@ public class CustomerService {
 
     // Thêm khách hàng mới
     public Customer createCustomer(Customer customer) {
+        // Đảm bảo id là null để database tự sinh
+        customer.setId(null);
+        // Lưu vào database, id sẽ được tự động sinh
         return customerRepository.save(customer);
     }
 
@@ -53,6 +51,7 @@ public class CustomerService {
             customer.setPhoneNumber(customerDetails.getPhoneNumber());
             customer.setNote(customerDetails.getNote());
             customer.setAddress(customerDetails.getAddress());
+            // Không cập nhật các trường quan hệ (userAccount, bookingSet, v.v.) vì không được gửi từ client
             return customerRepository.save(customer);
         }
         return null;

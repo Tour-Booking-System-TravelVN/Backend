@@ -21,7 +21,7 @@ public class TourService {
     }
 
     // Lấy thông tin tour theo ID
-    public Tour getTourById(Integer id) {
+    public Tour getTourById(String id) {
         Optional<Tour> tour = tourRepository.findById(id);
         return tour.orElse(null);
     }
@@ -32,7 +32,7 @@ public class TourService {
     }
 
     // Cập nhật thông tin tour
-    public Tour updateTour(Integer id, Tour tourDetails) {
+    public Tour updateTour(String id, Tour tourDetails) {
         Optional<Tour> tourOptional = tourRepository.findById(id);
         if (tourOptional.isPresent()) {
             Tour tour = tourOptional.get();
@@ -56,7 +56,7 @@ public class TourService {
     }
 
     // Xóa tour
-    public void deleteTour(Integer id) {
+    public void deleteTour(String id) {
         tourRepository.deleteById(id);
     }
 }

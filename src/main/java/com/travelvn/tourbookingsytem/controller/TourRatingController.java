@@ -18,9 +18,9 @@ public class TourRatingController {
     public ResponseEntity<List<TourRating>> getAllRatings() {
         return ResponseEntity.ok(tourRatingService.getAllRatings());
     }
-
-    @PutMapping("/{id}/status")
-    public ResponseEntity<TourRating> updateRatingStatus(@PathVariable Integer id, @RequestParam String status) {
-        return ResponseEntity.ok(tourRatingService.updateRatingStatus(id, status));
-    }
+//tamj thoi tat
+//    @PutMapping("/{id}/status")
+//    public ResponseEntity<TourRating> updateRatingStatus(@PathVariable Integer id, @RequestParam String status) {
+//        return ResponseEntity.ok(tourRatingService.updateRatingStatus(id, status));
+//    }
 }

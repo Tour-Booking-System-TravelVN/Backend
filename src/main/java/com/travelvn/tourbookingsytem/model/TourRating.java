@@ -1,5 +1,6 @@
 package com.travelvn.tourbookingsytem.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,16 +19,19 @@ public class TourRating {
 
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JsonIgnore
     @JoinColumn(name = "tour_unit_id", nullable = false)
     private TourUnit tourUnit;
 
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JsonIgnore
     @JoinColumn(name = "administrator_id", nullable = false)
     private Administrator administrator;
 
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JsonIgnore
     @JoinColumn(name = "c_id", nullable = false)
     private Customer c;
 

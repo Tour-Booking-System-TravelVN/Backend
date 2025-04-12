@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-
+// da test
 @Service
 public class FestivalService {
 
@@ -24,9 +24,15 @@ public class FestivalService {
     }
 //tạo festival mới
     public Festival createFestival(Festival festival) {
+        festival.setId(null);
+        //test them pham exception( do festival name equel
+        Optional<Festival> existingFestival = festivalRepository.findByFestivalName(festival.getFestivalName());
+        if (existingFestival.isPresent()) {
+            throw new RuntimeException("Festival exists: " + festival.getFestivalName());
+        }
         return festivalRepository.save(festival);
     }
-
+//cap nhat festival
     public Festival updateFestival(Integer id, Festival festivalDetails) {
         Optional<Festival> festivalOptional = festivalRepository.findById(id);
         if (festivalOptional.isPresent()) {
@@ -38,7 +44,7 @@ public class FestivalService {
         }
         return null;
     }
-
+// xoas
     public void deleteFestival(Integer id) {
         festivalRepository.deleteById(id);
     }

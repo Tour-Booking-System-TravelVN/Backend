@@ -1,5 +1,6 @@
 package com.travelvn.tourbookingsytem.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,11 +19,13 @@ public class CompanionCustomer {
 
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JsonIgnore  // Ngăn chặn vòng lặp khi serialize JSON
     @JoinColumn(name = "booking_id", nullable = false)
     private Booking booking;
 
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JsonIgnore
     @JoinColumn(name = "c_id", nullable = false)
     private Customer c;
 

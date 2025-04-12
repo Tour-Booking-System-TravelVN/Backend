@@ -7,4 +7,8 @@ import java.util.List;
 
 public interface TourGuideRepository extends JpaRepository<TourGuide, Integer> {
     List<TourGuide> findByFirstnameAndLastname(String firstname, String lastname);
+
+    List<TourGuide> findByFirstname(String firstname);
+
+    List<TourGuide> findByLastname(String lastname);
 }

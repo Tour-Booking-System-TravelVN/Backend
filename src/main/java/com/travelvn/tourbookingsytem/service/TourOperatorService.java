@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TourOperatorService {
@@ -14,7 +15,13 @@ public class TourOperatorService {
     private TourOperatorRepository tourOperatorRepository;
 
     public TourOperator createTourOperator(TourOperator tourOperator) {
+        tourOperator.setId(null);
         return tourOperatorRepository.save(tourOperator);
+    }
+
+    public TourOperator findTourOperatorById(int id) {
+        Optional<TourOperator> tourOperator = tourOperatorRepository.findById(id);
+        return tourOperator.orElse(null);
     }
 
     public TourOperator updateTourOperator(Integer id, TourOperator updatedTourOperator) {

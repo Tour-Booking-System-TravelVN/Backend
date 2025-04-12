@@ -25,6 +25,7 @@ public class DiscountService {
     }
 //theem cap nhat
     public Discount createDiscount(Discount discount) {
+        discount.setId(null);
         return discountRepository.save(discount);
     }
 

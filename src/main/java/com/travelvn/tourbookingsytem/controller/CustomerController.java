@@ -1,6 +1,4 @@
-package com.travelvn.tourbookingsystem.controller;
-
-
+package com.travelvn.tourbookingsytem.controller;
 import com.travelvn.tourbookingsytem.model.Customer;
 import com.travelvn.tourbookingsytem.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 import java.util.List;
-
+//test toan bo xong
 @RestController
 @RequestMapping("/api/customers")
 public class CustomerController {

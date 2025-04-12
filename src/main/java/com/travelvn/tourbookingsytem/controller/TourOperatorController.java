@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+//da TEST
 @RestController
 @RequestMapping("/api/tour-operators")
 public class TourOperatorController {
@@ -19,6 +19,10 @@ public class TourOperatorController {
         return ResponseEntity.ok(tourOperatorService.getAllTourOperators());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<TourOperator> getTourOperatorById(@PathVariable int id) {
+        return ResponseEntity.ok(tourOperatorService.findTourOperatorById(id));
+    }
     @PostMapping
     public ResponseEntity<TourOperator> createTourOperator(@RequestBody TourOperator tourOperator) {
         return ResponseEntity.ok(tourOperatorService.createTourOperator(tourOperator));
