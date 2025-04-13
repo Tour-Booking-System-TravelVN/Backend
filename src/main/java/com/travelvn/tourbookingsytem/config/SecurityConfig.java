@@ -33,7 +33,7 @@ public class SecurityConfig {
             "/payment/**"};
 
     //Các endpoint được phép gọi khi chưa có token với phương thức GET
-    private final String[] PUBLIC_GET_ENDPOINTS = {"/tourunit/foundtourlist", "/festival/carousel", "/rating/tour"/*, "/order/**"*/};
+    private final String[] PUBLIC_GET_ENDPOINTS = {"/tourunit/foundtourlist", "/festival/carousel", "/rating/tour-detail/*"/*, "/order/**"*/};
 
     //Các endpoint GET của khách hàng
     private final String[] CUSTOMER_GET_ENDPOINTS = {"/booking/checkbeforebooking", "/booking/*","/customer/myinfo","/tourunit/mytours"};
@@ -88,7 +88,9 @@ public class SecurityConfig {
 
         //Authentication Provider
         httpSecurity.oauth2ResourceServer(oauth2 ->
-                oauth2.jwt(jwtConfigurer ->
+                oauth2
+                        .bearerTokenResolver(jwtFilter)
+                        .jwt(jwtConfigurer ->
                                 jwtConfigurer.decoder(jwtDecoder)
                                         .jwtAuthenticationConverter(jwtAuthenticationConverter()))
                         .authenticationEntryPoint(new JWTAuthenticationEntryPoint())

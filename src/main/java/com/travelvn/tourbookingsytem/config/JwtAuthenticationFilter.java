@@ -90,18 +90,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter implements Bea
      * @return token hoặc null nếu không tìm thấy
      */
     private String resolveToken(HttpServletRequest request) {
+        String headerToken = defaultBearerTokenResolver.resolve(request);
+        if (headerToken != null) return headerToken;
+
         // Kiểm tra cookie
         Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            return Arrays.stream(cookies)
-                    .filter(cookie -> "token".equals(cookie.getName()))
-                    .findFirst()
-                    .map(Cookie::getValue)
-                    .orElse(null);
-        }
+//        if (cookies != null) {
+//            return Arrays.stream(cookies)
+//                    .filter(cookie -> "token".equals(cookie.getName()))
+//                    .findFirst()
+//                    .map(Cookie::getValue)
+//                    .orElse(null);
+//        }
+        return Arrays.stream(cookies)
+                .filter(cookie -> "token".equals(cookie.getName()))
+                .findFirst()
+                .map(Cookie::getValue)
+                .orElse(null);
 
         // Nếu không tìm thấy trong cookie, kiểm tra header Authorization
-        return defaultBearerTokenResolver.resolve(request);
+//        return defaultBearerTokenResolver.resolve(request);
     }
 
     /**

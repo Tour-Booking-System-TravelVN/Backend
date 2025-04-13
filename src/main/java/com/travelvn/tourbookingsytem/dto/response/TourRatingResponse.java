@@ -14,11 +14,11 @@ public class TourRatingResponse {
 
     private Integer id;
 
-    private TourUnitResponse tourUnit;
+//    private TourUnitResponse tourUnit;
 
     private AdministratorResponse administrator;
 
-    private Customer c;
+    private String fullname;
 
     private Byte ratingValue;
 
