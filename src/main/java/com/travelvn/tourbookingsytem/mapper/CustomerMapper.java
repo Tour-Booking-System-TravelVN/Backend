@@ -6,13 +6,21 @@ import com.travelvn.tourbookingsytem.model.Customer;
 import org.mapstruct.*;
 
 @Named("CustomerMapper")
-@Mapper(componentModel = "spring", uses = {UserAccountMapper.class}/*, unmappedTargetPolicy = ReportingPolicy.IGNORE*/)
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = {UserAccountMapper.class}/*, unmappedTargetPolicy = ReportingPolicy.IGNORE*/)
 public interface CustomerMapper {
     //Mapping thông tin người đi cùng để đặt tour
-    @Mappings({
-            @Mapping(source = "userAccount", target = "userAccount", qualifiedByName = {"UserAccountMapper", "toUserAccountEmail"})
-    })
+//    {"UserAccountMapper", "toUserAccountEmail"}
+//    @Mappings({
+//            @Mapping(source = "userAccount", target = "userAccount", qualifiedByName = "toUserAccountEmail")
+//    })
     Customer toCustomerToBook(CustomerRequest customerRequest);
+
+    //Mapping thông tin khách hàng để đăng ký
+//    @Named("toCustomerToRegister")
+//    @Mappings({
+//            @Mapping(target = "userAccount", ignore = true)
+//    })
+//    Customer toCustomerToRegister(CustomerRequest customerRequest);
 
 //    Customer toCustomer(CustomerResponse customerResponse);
 
@@ -23,11 +31,16 @@ public interface CustomerMapper {
 //            @Mapping(target = "userAccount", qualifiedByName = {"UserAccountMapper", "toUserAccountResponseWithoutCustomer"})
 //    })
 
-    CustomerResponse toCustomerResponse(Customer customer);
+    //Mapping lấy thông tin người dùng
+//    @Named("toCustomerResponseWithoutUserAccount")
+//    @Mappings({
+//            @Mapping(target = "userAccount", ignore = true),
+//    })
+//    CustomerResponse toCustomerResponseWithoutUserAccount(Customer customer);
 
 //    @Named("toCustomerResponseWithoutUserAccount")
 //    @Mappings({
-//            @Mapping(target = "userAccount", expression = "java(null)")
+//            @Mapping(target = "userAccount", ignore = true)
 //    })
-//    CustomerResponse toCustomerResponseWithoutUserAccount(Customer customer);
+    CustomerResponse toCustomerResponse(Customer customer);
 }

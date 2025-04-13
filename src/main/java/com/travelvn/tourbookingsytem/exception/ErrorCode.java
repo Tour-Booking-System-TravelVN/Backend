@@ -30,6 +30,9 @@ public enum ErrorCode {
     MULTI_HOLDING(1017, "Bạn đã đặt nhiều tour hôm nay nhưng không thanh toán. Hãy quay lại vào ngày mai nhé.", HttpStatus.BAD_REQUEST),
     BOOKING_ORDER_CODE_NOT_EXISTED(1018, "Không thấy mã đặt tour", HttpStatus.NOT_FOUND),
 
+    ACCOUNT_LOCKED(1019, "Tài khoản đã bị khóa.", HttpStatus.FORBIDDEN),
+    NO_FESTIVALS_CAROUSEL(1020, "Không có lễ hội để hiển thị", HttpStatus.NOT_FOUND),
+
     TOURUNIT_NOT_EXISTED(2000,"Không tìm thấy đơn vị tour.", HttpStatus.NOT_FOUND),
     BOOKING_TIME_CONFLICT(2001, "Thời gian tour diễn ra xung đột với tour của bạn.", HttpStatus.BAD_REQUEST),
     BOOKING_SYSTEM_CONFLICT(2002, "Xin chào,\n" +

@@ -1,7 +1,8 @@
-package com.travelvn.tourbookingsytem.dto.request;
+package com.travelvn.tourbookingsytem.dto.request.lite;
 
-import com.travelvn.tourbookingsytem.dto.request.lite.CustomerRequestLite;
-import com.travelvn.tourbookingsytem.exception.ErrorCode;
+import com.travelvn.tourbookingsytem.dto.request.AdministratorRequest;
+import com.travelvn.tourbookingsytem.dto.request.TourGuideRequest;
+import com.travelvn.tourbookingsytem.dto.request.TourOperatorRequest;
 import com.travelvn.tourbookingsytem.validator.EmailConstraint;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -13,7 +14,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @ToString
-public class UserAccountRequest {
+public class UserAccountRequestLite {
     @Size(min = 8, max = 40, message = "USERNAME_INVALID")
     @NotNull
     private String username;
@@ -21,8 +22,6 @@ public class UserAccountRequest {
     @Size(min = 6, max = 20, message = "PASSWORD_INVALID")
     @NotNull
     private String password;
-
-    private CustomerRequestLite c;
 
     private AdministratorRequest administrator;
 

@@ -6,6 +6,8 @@ import com.travelvn.tourbookingsytem.dto.response.FestivalResponse;
 import com.travelvn.tourbookingsytem.model.Customer;
 import com.travelvn.tourbookingsytem.model.Festival;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
 import org.mapstruct.Named;
 
 //@Component
@@ -17,4 +19,10 @@ public interface FestivalMapper {
 
 //    FestivalRequest toFestivalRequest(Festival festival);
     FestivalResponse toFestivalResponse(Festival festival);
+
+    @Mappings({
+            @Mapping(target = "description", ignore = true),
+            @Mapping(target = "displayStatus", ignore = true)
+    })
+    FestivalResponse toFestivalResponseCarousel(Festival festival);
 }

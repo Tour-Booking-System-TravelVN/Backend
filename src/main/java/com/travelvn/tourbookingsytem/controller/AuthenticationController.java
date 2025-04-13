@@ -122,7 +122,8 @@ public class AuthenticationController {
 
     /**
      * Kiểm tra token có hợp lệ không (Xử lý việc chuyển giữa các trang web)
-     * @param request Token
+     *
+     * @param request  Token
      * @param response Dùng Setcookie
      * @return
      * @throws ParseException
@@ -135,7 +136,7 @@ public class AuthenticationController {
         String token = jwtAuthenticationFilter.resolve(request);
 
         //Nếu không nhận được token nào => token không hợp lệ
-        if(token==null)
+        if (token == null)
             return ApiResponse.<IntrospectResponse>builder()
                     .result(IntrospectResponse
                             .builder()
@@ -144,18 +145,30 @@ public class AuthenticationController {
                     .build();
 
         //Nếu có token => Kiểm tra token và trả về kết quả
-
+        IntrospectResponse introspectResponse = authenticationService.introspect(IntrospectRequest.builder()
+                .token(token)
+                .build());
+        boolean rs = introspectResponse.isValid();
+        if (!rs) {
+            ResponseCookie cookie = ResponseCookie.from("token", "")
+                    .httpOnly(true)
+                    .secure(true) //Dùng http
+                    .sameSite("None")
+                    .path("/")
+                    .maxAge(0) // Xóa cookie
+                    .domain("")
+                    .build();
+        }
         return ApiResponse.<IntrospectResponse>builder()
-                .result(authenticationService.introspect(IntrospectRequest.builder()
-                                .token(token)
-                        .build()))
+                .result(introspectResponse)
                 .build();
     }
 
     /**
      * API đăng xuất
-     *
+     * <p>
      * Token của người dùng
+     *
      * @return
      */
 //    @PostMapping("/logout")
@@ -224,6 +237,7 @@ public class AuthenticationController {
 
     /**
      * Log out khỏi app
+     *
      * @param request
      * @param response
      * @return
@@ -245,6 +259,7 @@ public class AuthenticationController {
 
     /**
      * Api refresh token ở app mobile
+     *
      * @param request token
      * @return
      * @throws JOSEException
@@ -253,7 +268,7 @@ public class AuthenticationController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/refreshapp")
     public ApiResponse<AuthenticationResponse> authenticate(@RequestBody RefreshTokenRequest request)
-                    throws JOSEException, ParseException {
+            throws JOSEException, ParseException {
         return ApiResponse.<AuthenticationResponse>builder()
                 .result(authenticationService.refreshToken(request))
                 .build();
@@ -261,6 +276,7 @@ public class AuthenticationController {
 
     /**
      * Api refresh token ở web
+     *
      * @param request token
      * @return
      * @throws JOSEException

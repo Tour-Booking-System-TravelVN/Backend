@@ -85,6 +85,10 @@ public class AuthenticationService {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
 
+        if(user.getStatus().equalsIgnoreCase("LOCK")){
+            throw new AppException(ErrorCode.ACCOUNT_LOCKED);
+        }
+
 //        UserAccount userAccount = userAccountMapper.toUserAccount(userAccountRequest);
         var token = generateToken(user);
 

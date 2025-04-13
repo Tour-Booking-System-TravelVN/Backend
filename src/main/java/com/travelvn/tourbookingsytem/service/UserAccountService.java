@@ -73,12 +73,16 @@ public class UserAccountService {
      * @return Thông tin tài khoản
      */
     public UserAccountResponse getMyInfo() {
+        log.info("SERVICE GETMYINFO");
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
 
         UserAccount account = userAccountRepository.findById(name)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
+        log.info(account.toString());
+        log.info(account.getC().toString());
+        log.info(userAccountMapper.toUserAccountResponse(account).toString());
         return userAccountMapper.toUserAccountResponse(account);
     }
 }

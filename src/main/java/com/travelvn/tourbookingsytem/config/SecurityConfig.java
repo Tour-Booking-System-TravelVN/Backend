@@ -28,14 +28,15 @@ public class SecurityConfig {
 
     //Các endpoint được phép gọi khi chưa có token
     private final String[] PUBLIC_ENDPOINTS = {"/login",
-            "/auth/token", "/auth/tokenapp", "/auth/introspect", "/auth/logout", "/auth/refresh", "/register", "/tour/foundtourlist", "/tourunit/foundtourlist", "/registerapp",
+            "/auth/token", "/auth/tokenapp", "/auth/introspect", "/auth/logout", "/auth/refresh", "/register",
+            "/tour/foundtourlist", "/tourunit/foundtourlist", "/registerapp",
             "/payment/**"};
 
     //Các endpoint được phép gọi khi chưa có token với phương thức GET
-    private final String[] PUBLIC_GET_ENDPOINTS = {"/tourunit/foundtourlist"/*, "/order/**"*/};
+    private final String[] PUBLIC_GET_ENDPOINTS = {"/tourunit/foundtourlist", "/festival/carousel", "/rating/tour"/*, "/order/**"*/};
 
     //Các endpoint GET của khách hàng
-    private final String[] CUSTOMER_GET_ENDPOINTS = {"/booking/checkbeforebooking", "/booking/*"};
+    private final String[] CUSTOMER_GET_ENDPOINTS = {"/booking/checkbeforebooking", "/booking/*","/customer/myinfo","/tourunit/mytours"};
 
     //Các endpoint POST của khách hàng
     private final String[] CUSTOMER_POST_ENDPOINTS = {/*"booking/booktour"*/"/order/create"};

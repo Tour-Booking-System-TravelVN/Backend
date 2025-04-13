@@ -1,6 +1,8 @@
-package com.travelvn.tourbookingsytem.dto.response;
+package com.travelvn.tourbookingsytem.dto.response.lite;
 
-import com.travelvn.tourbookingsytem.dto.response.lite.CustomerResponseLite;
+import com.travelvn.tourbookingsytem.dto.response.AdministratorResponse;
+import com.travelvn.tourbookingsytem.dto.response.TourGuideResponse;
+import com.travelvn.tourbookingsytem.dto.response.TourOperatorResponse;
 import lombok.*;
 
 @Getter
@@ -9,12 +11,12 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @ToString
-public class UserAccountResponse {
+public class UserAccountResponseLite {
     private String username;
 
 //    private String password;
 
-    private CustomerResponseLite c;
+//    private CustomerResponseLite c;
 
     private AdministratorResponse administrator;
 
