@@ -3,6 +3,8 @@ package com.travelvn.tourbookingsytem.service;
 import com.travelvn.tourbookingsytem.dto.request.FindTourRequest;
 import com.travelvn.tourbookingsytem.dto.response.ApiResponse;
 import com.travelvn.tourbookingsytem.dto.response.TourResponse;
+import com.travelvn.tourbookingsytem.dto.response.peace.TourCalendarResponse;
+import com.travelvn.tourbookingsytem.dto.response.peace.TourUnitCalendarResponse;
 import com.travelvn.tourbookingsytem.mapper.TourMapper;
 import com.travelvn.tourbookingsytem.model.Tour;
 import com.travelvn.tourbookingsytem.model.TourUnit;
@@ -94,4 +96,12 @@ public class TourService {
 //        return null;
     }
 
+    /**
+     * Lấy ra danh sách các tháng và năm của tour
+     * @param tourid mã tour
+     * @return Danh sách các tháng và năm của tour
+     */
+    public List<TourCalendarResponse> getTourCalendar(String tourid){
+        return tourRepository.findDistinctMonthAndYearFromDepartureDate(tourid);
+    }
 }

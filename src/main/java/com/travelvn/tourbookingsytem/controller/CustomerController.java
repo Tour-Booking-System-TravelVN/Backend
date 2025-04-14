@@ -1,6 +1,7 @@
 package com.travelvn.tourbookingsytem.controller;
 
 import com.travelvn.tourbookingsytem.dto.request.CustomerRequest;
+import com.travelvn.tourbookingsytem.dto.request.customer.UpdateCustomerRequest;
 import com.travelvn.tourbookingsytem.dto.response.ApiResponse;
 import com.travelvn.tourbookingsytem.dto.response.CustomerResponse;
 import com.travelvn.tourbookingsytem.dto.response.UserAccountResponse;
@@ -21,6 +22,10 @@ public class CustomerController {
     private final CustomerService customerService;
     private final UserAccountService userAccountService;
 
+    /**
+     * Api lấy thông tin của mình
+     * @return thông tin của mình
+     */
     @GetMapping("/myinfo")
     public ApiResponse<UserAccountResponse> getMyInfo(){
         log.info("CONTROLLER MYINFO");
@@ -29,6 +34,12 @@ public class CustomerController {
                 .build();
     }
 
+    @PutMapping("/myinfo/update")
+    public ApiResponse<UserAccountResponse> updateMyInfo(@RequestBody UpdateCustomerRequest updateCustomerRequest){
+        return ApiResponse.<UserAccountResponse>builder()
+                .result(userAccountService.updateMyInfo(updateCustomerRequest))
+                .build();
+    }
 
 
 }

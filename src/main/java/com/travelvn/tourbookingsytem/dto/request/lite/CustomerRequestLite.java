@@ -3,8 +3,10 @@ package com.travelvn.tourbookingsytem.dto.request.lite;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.travelvn.tourbookingsytem.validator.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 
@@ -12,7 +14,7 @@ import java.time.LocalDate;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @ToString
 @CitizenIdConstraint(citizenId = "citizenId", dateOfBirth = "dateOfBirth", gender = "gender", message = "INVALID_CI")
 public class CustomerRequestLite {
@@ -21,19 +23,23 @@ public class CustomerRequestLite {
     @Size(min = 2, max = 40)
     @FirstNameConstraint(message = "INVALID_FIRSTNAME")
     @JsonProperty("firstname")
+    @NotBlank
     private String firstname;
 
     @Size(min = 2, max = 10)
     @LastNameConstraint(message = "INVALID_LASTNAME")
     @JsonProperty("lastname")
+    @NotBlank
     private String lastname;
 
     @DobConstraint(min = 0, message = "INVALID_DOB")
     @JsonProperty("dob")
     @JsonFormat(pattern = "yyyy-MM-dd")
+    @NotBlank
     private LocalDate dateOfBirth;
 
     @JsonProperty("gender")
+    @NotBlank
     private Boolean gender = false;
 
     @JsonProperty("nationality")

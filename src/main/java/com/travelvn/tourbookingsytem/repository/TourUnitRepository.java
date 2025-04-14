@@ -156,4 +156,11 @@ public interface TourUnitRepository extends JpaRepository<TourUnit, String> {
             @Param("cid") int cid,
             Pageable pageable
     );
+
+    @Query("SELECT tu from TourUnit tu join tu.tour t where month(tu.departureDate) = :month AND year(tu.departureDate) = :year and t.tourId = :tourId ")
+    List<TourUnit> getTourUnitCalendar(
+           @Param("month") int month,
+           @Param("year") int year,
+           @Param("tourId") String tourId
+    );
 }

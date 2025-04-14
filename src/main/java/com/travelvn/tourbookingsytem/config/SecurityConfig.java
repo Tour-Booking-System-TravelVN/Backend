@@ -33,13 +33,16 @@ public class SecurityConfig {
             "/payment/**"};
 
     //Các endpoint được phép gọi khi chưa có token với phương thức GET
-    private final String[] PUBLIC_GET_ENDPOINTS = {"/tourunit/foundtourlist", "/festival/carousel", "/rating/tour-detail/*"/*, "/order/**"*/};
+    private final String[] PUBLIC_GET_ENDPOINTS = {"/tourunit/foundtourlist", "/tourunit/calendar", "/tour/calendar/*", "/festival/carousel", "/rating/tour-detail/*", "/program/tour-detail/*"/*, "/order/**"*/};
 
     //Các endpoint GET của khách hàng
-    private final String[] CUSTOMER_GET_ENDPOINTS = {"/booking/checkbeforebooking", "/booking/*","/customer/myinfo","/tourunit/mytours"};
+    private final String[] CUSTOMER_GET_ENDPOINTS = {"/booking/checkbeforebooking", "/booking/*","/customer/myinfo", /*"/tourunit/mytours",*/ "/booking/mytours", "/rating/rating-tour/check"};
 
     //Các endpoint POST của khách hàng
-    private final String[] CUSTOMER_POST_ENDPOINTS = {/*"booking/booktour"*/"/order/create"};
+    private final String[] CUSTOMER_POST_ENDPOINTS = {/*"booking/booktour"*/"/order/create", "/rating/rating-tour"};
+
+    //Các endpoint PUT của khách hàng
+    private final String[] CUSTOMER_PUT_ENDPOINTS = {"/changePwd", "/customer/myinfo/update","/booking/cancel/*"};
 
     private final CustomJwtDecoder jwtDecoder;
 
@@ -83,6 +86,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, PUBLIC_GET_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.GET, CUSTOMER_GET_ENDPOINTS).hasRole(Role.CUSTOMER.name())
                         .requestMatchers(HttpMethod.POST, CUSTOMER_POST_ENDPOINTS).hasRole(Role.CUSTOMER.name())
+                        .requestMatchers(HttpMethod.PUT, CUSTOMER_PUT_ENDPOINTS).hasRole(Role.CUSTOMER.name())
 //                        .requestMatchers(HttpMethod.POST, "/auth/refresh").hasRole(Role.CUSTOMER.name())
                         .anyRequest().authenticated());
 

@@ -16,9 +16,9 @@ public class TourRatingResponse {
 
 //    private TourUnitResponse tourUnit;
 
-    private AdministratorResponse administrator;
+//    private AdministratorResponse administrator;
 
-    private String fullname;
+    private String fullName;
 
     private Byte ratingValue;
 

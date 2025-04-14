@@ -6,16 +6,22 @@ import com.travelvn.tourbookingsytem.dto.request.CustomerRequest;
 import com.travelvn.tourbookingsytem.dto.request.booktour.CheckBeforeBookingRequest;
 import com.travelvn.tourbookingsytem.dto.response.ApiResponse;
 import com.travelvn.tourbookingsytem.dto.response.BookingResponse;
+import com.travelvn.tourbookingsytem.dto.response.TourUnitResponse;
 import com.travelvn.tourbookingsytem.enums.BookingStatus;
 import com.travelvn.tourbookingsytem.exception.AppException;
 import com.travelvn.tourbookingsytem.exception.ErrorCode;
 import com.travelvn.tourbookingsytem.mapper.BookingMapper;
 import com.travelvn.tourbookingsytem.mapper.CompanionCustomerMapper;
 import com.travelvn.tourbookingsytem.mapper.CustomerMapper;
+import com.travelvn.tourbookingsytem.mapper.TourMapper;
 import com.travelvn.tourbookingsytem.model.*;
 import com.travelvn.tourbookingsytem.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +31,7 @@ import java.math.RoundingMode;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -38,8 +45,10 @@ public class BookingService {
 
     private final BookingMapper bookingMapper;
     private final CustomerMapper customerMapper;
+    private final TourMapper tourMapper;
 
     private final byte MAX_HOLDING = (byte) 5;
+    private static final Byte ITEM_OF_PAGE = (byte) 10;
 
     /**
      * Kiểm tra trước khi chuyển sang trang đặt tour
@@ -422,5 +431,105 @@ public class BookingService {
                 .message("Đặt tour thành công")
                 .result(booking.getBookingId())
                 .build();
+    }
+
+    /**
+     * Lấy danh sách các tour của mình
+     * @return Danh sách các tour của mình
+     */
+    public Page<BookingResponse> getMyTours(String status, int page){
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+
+        UserAccount account = userAccountRepository.findById(name)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        return switch (status){
+            case "done" -> getMyToursDone(account.getC().getId(), page);
+            case "opw" -> getMyToursOPW(account.getC().getId(), page);
+            default -> null;
+        };
+    }
+
+    /**
+     * Lấy danh sách các tour đã đi của mình
+     * @return Danh sách các tour đã đi của mình
+     */
+    public Page<BookingResponse> getMyToursDone(int cid, int page){
+        Pageable pageable = PageRequest.of(page, ITEM_OF_PAGE);
+        Page<Booking> rs = bookingRepository.getMyToursDone(cid, pageable);
+
+        // Dùng map() với stream để chuyển đổi đối tượng TourUnit sang TourUnitResponse
+        List<BookingResponse> responseList = rs.stream()
+                .map(booking -> {
+                    BookingResponse bookingResponse = bookingMapper.toBookingResponse(booking);
+                    tourMapper.setFirstImageUrl(booking.getTourUnit().getTour(), bookingResponse.getTourUnit().getTour());
+                    return bookingResponse;
+                })
+                .collect(Collectors.toList());
+
+        // Trả về Page<TourUnitResponse> mới, với dữ liệu đã chuyển đổi
+        return new PageImpl<>(responseList, pageable, rs.getTotalElements());
+    }
+
+    /**
+     * Lấy danh sách các tour chưa và đang đi của mình
+     * @return Lấy danh sách các tour chưa và đang đi của mình
+     */
+    public Page<BookingResponse> getMyToursOPW(int cid, int page){
+        Pageable pageable = PageRequest.of(page, ITEM_OF_PAGE);
+        Page<Booking> rs = bookingRepository.getMyToursOPW(cid, pageable);
+
+        /// Dùng map() với stream để chuyển đổi đối tượng TourUnit sang TourUnitResponse
+        List<BookingResponse> responseList = rs.stream()
+                .map(booking -> {
+                    BookingResponse bookingResponse = bookingMapper.toBookingResponse(booking);
+                    tourMapper.setFirstImageUrl(booking.getTourUnit().getTour(), bookingResponse.getTourUnit().getTour());
+                    return bookingResponse;
+                })
+                .collect(Collectors.toList());
+
+        // Trả về Page<TourUnitResponse> mới, với dữ liệu đã chuyển đổi
+        return new PageImpl<>(responseList, pageable, rs.getTotalElements());
+    }
+
+    /**
+     * Hủy tour
+     * @param bookingid Mã đặt tour
+     * @return Kết quả hủy tour
+     */
+    public boolean cancelBooking(String bookingid){
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+
+        UserAccount account = userAccountRepository.findById(name)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        Booking booking = bookingRepository.findById(bookingid)
+                .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXISTED));
+
+        //Kiểm tra đấy có phải đặt tour của họ -> Kiểm tra điều kiện là chưa đi -> set W và expired_at -> return
+        if(!account.getC().equals(booking.getC()))
+            throw new AppException(ErrorCode.UNAUTHORIZED);
+
+        if(!booking.getStatus().equalsIgnoreCase(BookingStatus.P.name()))
+            throw new AppException(ErrorCode.BOOKING_NOT_CANCELED);
+
+        booking.setStatus(BookingStatus.W.name());
+        booking.setExpiredAt(Instant.now().toEpochMilli());
+
+        bookingRepository.save(booking);
+
+        return true;
+    }
+
+    /**
+     * Cập nhật toàn bộ trạng thái tour tự động
+     * P -> O -> D
+     */
+    @Transactional
+    public void updateBookingStatus(){
+        bookingRepository.updateBookingPToO();
+        bookingRepository.updateBookingOToD();
     }
 }

@@ -1,6 +1,7 @@
 package com.travelvn.tourbookingsytem.mapper;
 
 import com.travelvn.tourbookingsytem.dto.request.UserAccountRequest;
+import com.travelvn.tourbookingsytem.dto.request.customer.UpdateCustomerRequest;
 import com.travelvn.tourbookingsytem.dto.response.UserAccountResponse;
 import com.travelvn.tourbookingsytem.model.UserAccount;
 import org.mapstruct.*;
@@ -40,5 +41,7 @@ public interface UserAccountMapper {
 //    })
     UserAccountResponse toUserAccountResponse(UserAccount userAccount);
 
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateUserAccount(UpdateCustomerRequest updateCustomerRequest, @MappingTarget UserAccount userAccount);
 //    void updateUserAccount(@MappingTarget UserAccount userAccount, UserAccountRequest userAccountRequest);
 }

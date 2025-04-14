@@ -95,19 +95,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter implements Bea
 
         // Kiểm tra cookie
         Cookie[] cookies = request.getCookies();
-//        if (cookies != null) {
-//            return Arrays.stream(cookies)
-//                    .filter(cookie -> "token".equals(cookie.getName()))
-//                    .findFirst()
-//                    .map(Cookie::getValue)
-//                    .orElse(null);
-//        }
-        return Arrays.stream(cookies)
-                .filter(cookie -> "token".equals(cookie.getName()))
-                .findFirst()
-                .map(Cookie::getValue)
-                .orElse(null);
+        if (cookies != null) {
+            return Arrays.stream(cookies)
+                    .filter(cookie -> "token".equals(cookie.getName()))
+                    .findFirst()
+                    .map(Cookie::getValue)
+                    .orElse(null);
+        }
+//        return Arrays.stream(cookies)
+//                .filter(cookie -> "token".equals(cookie.getName()))
+//                .findFirst()
+//                .map(Cookie::getValue)
+//                .orElse(null);
 
+        return null;
         // Nếu không tìm thấy trong cookie, kiểm tra header Authorization
 //        return defaultBearerTokenResolver.resolve(request);
     }

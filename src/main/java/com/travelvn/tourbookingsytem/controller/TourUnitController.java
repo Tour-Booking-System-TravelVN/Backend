@@ -4,6 +4,7 @@ import com.travelvn.tourbookingsytem.dto.request.FindTourRequest;
 import com.travelvn.tourbookingsytem.dto.response.ApiResponse;
 import com.travelvn.tourbookingsytem.dto.response.TourResponse;
 import com.travelvn.tourbookingsytem.dto.response.TourUnitResponse;
+import com.travelvn.tourbookingsytem.dto.response.peace.TourUnitCalendarResponse;
 import com.travelvn.tourbookingsytem.service.TourService;
 import com.travelvn.tourbookingsytem.service.TourUnitService;
 import lombok.RequiredArgsConstructor;
@@ -33,12 +34,24 @@ public class TourUnitController {
         return tourUnitService.findTours(findTourRequest);
     }
 
-    @GetMapping("/mytours")
-    public ApiResponse<Page<TourUnitResponse>> myTours(@RequestParam Map<String, String> params) {
-        String status = params.get("status");
-        int page = Integer.parseInt(params.get("page"));
-        return ApiResponse.<Page<TourUnitResponse>>builder()
-                .result(tourUnitService.getMyTours(status, page))
+    @GetMapping("/calendar")
+    public ApiResponse<List<TourUnitCalendarResponse>> getTourUnitCalendar(@RequestParam Map<String, String> params) {
+//        log.info("CHECK TU CALENDAR");
+        int month = Integer.parseInt(params.get("month"));
+        int year = Integer.parseInt(params.get("year"));
+        String tourId = params.get("tourid");
+
+        return ApiResponse.<List<TourUnitCalendarResponse>>builder()
+                .result(tourUnitService.getTourUnitCalendar(month, year, tourId))
                 .build();
     }
+
+//    @GetMapping("/mytours")
+//    public ApiResponse<Page<TourUnitResponse>> myTours(@RequestParam Map<String, String> params) {
+//        String status = params.get("status");
+//        int page = Integer.parseInt(params.get("page"));
+//        return ApiResponse.<Page<TourUnitResponse>>builder()
+//                .result(tourUnitService.getMyTours(status, page))
+//                .build();
+//    }
 }

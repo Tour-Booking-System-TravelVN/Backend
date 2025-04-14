@@ -13,6 +13,7 @@ import lombok.*;
 @Table(name = "tour_rating")
 public class TourRating {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "tour_rating_id", nullable = false)
     private Integer id;
 
@@ -23,7 +24,7 @@ public class TourRating {
 
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "administrator_id", nullable = false)
+    @JoinColumn(name = "administrator_id", nullable = true)
     private Administrator administrator;
 
     @ToString.Exclude

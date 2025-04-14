@@ -66,6 +66,10 @@ public class Booking {
     @Column(name = "order_code")
     private Long orderCode;
 
+    /**
+     * Thời điểm hệ thống nhận được yêu cầu hủy tour.
+     * Trước đây dùng để lưu thời gian hết hạn thanh toán (không còn sử dụng).
+     */
     @Column(name = "expired_at")
     private Long expiredAt;
 

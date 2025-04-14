@@ -1,5 +1,6 @@
 package com.travelvn.tourbookingsytem.dto.response;
 
+import com.travelvn.tourbookingsytem.dto.response.lite.CompanionCustomerResponseLite;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -40,5 +41,5 @@ public class BookingResponse {
 
     private Byte privateRoomNumber;
 
-//    private Set<CompanionCustomerResponse> companionCustomerSet;
+    private Set<CompanionCustomerResponseLite> companionCustomerSet;
 }

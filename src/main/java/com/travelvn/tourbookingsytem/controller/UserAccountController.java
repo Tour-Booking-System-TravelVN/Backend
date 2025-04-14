@@ -1,6 +1,7 @@
 package com.travelvn.tourbookingsytem.controller;
 
 import com.travelvn.tourbookingsytem.dto.request.UserAccountRequest;
+import com.travelvn.tourbookingsytem.dto.request.useraccount.ChangePwdRequest;
 import com.travelvn.tourbookingsytem.dto.response.ApiResponse;
 import com.travelvn.tourbookingsytem.dto.response.AuthenticationResponse;
 import com.travelvn.tourbookingsytem.dto.response.UserAccountResponse;
@@ -11,10 +12,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseCookie;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
 
@@ -102,7 +100,7 @@ public class UserAccountController {
                 .build();
     }
 
-    /**
+    /** TEMPT NOT USED
      * API lấy thông tin của mình
      *
      * @return API thông tin của mình
@@ -111,6 +109,18 @@ public class UserAccountController {
     public ApiResponse<UserAccountResponse> getMyInfo() {
         return ApiResponse.<UserAccountResponse>builder()
                 .result(userAccountService.getMyInfo())
+                .build();
+    }
+
+    /**
+     * API đổi mật khẩu
+     * @param changePwdRequest Yêu cầu đổi mật khẩu
+     * @return Kết quả đổi mật khẩu
+     */
+    @PutMapping("/changePwd")
+    public ApiResponse<Boolean> changePwd(@Valid @RequestBody ChangePwdRequest changePwdRequest){
+        return ApiResponse.<Boolean>builder()
+                .result(userAccountService.changePwd(changePwdRequest))
                 .build();
     }
 }

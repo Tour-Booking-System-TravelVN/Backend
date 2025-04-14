@@ -4,10 +4,12 @@ import com.travelvn.tourbookingsytem.dto.request.FindTourRequest;
 import com.travelvn.tourbookingsytem.dto.response.ApiResponse;
 import com.travelvn.tourbookingsytem.dto.response.TourResponse;
 import com.travelvn.tourbookingsytem.dto.response.TourUnitResponse;
+import com.travelvn.tourbookingsytem.dto.response.peace.TourUnitCalendarResponse;
 import com.travelvn.tourbookingsytem.exception.AppException;
 import com.travelvn.tourbookingsytem.exception.ErrorCode;
 import com.travelvn.tourbookingsytem.mapper.TourMapper;
 import com.travelvn.tourbookingsytem.mapper.TourUnitMapper;
+import com.travelvn.tourbookingsytem.mapper.peace.TourUnitCalendarMapper;
 import com.travelvn.tourbookingsytem.model.*;
 import com.travelvn.tourbookingsytem.repository.TourRepository;
 import com.travelvn.tourbookingsytem.repository.TourUnitRepository;
@@ -37,9 +39,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TourUnitService {
     private final TourUnitRepository tourUnitRepository;
+
     private final TourMapper tourMapper;
     private final TourUnitMapper tourUnitMapper;
+    private final TourUnitCalendarMapper tourUnitCalendarMapper;
+
     private final EntityManager entityManager;
+
     private final UserAccountRepository userAccountRepository;
 
     private static final String INFINITY = "Infinity";
@@ -396,43 +402,54 @@ public class TourUnitService {
      * Lấy danh sách các tour đã đi của mình
      * @return Danh sách các tour đã đi của mình
      */
-    public Page<TourUnitResponse> getMyTours(String status, int page){
-        var context = SecurityContextHolder.getContext();
-        String name = context.getAuthentication().getName();
+//    public Page<TourUnitResponse> getMyTours(String status, int page){
+//        var context = SecurityContextHolder.getContext();
+//        String name = context.getAuthentication().getName();
+//
+//        UserAccount account = userAccountRepository.findById(name)
+//                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+//
+//        return switch (status){
+//            case "done" -> getMyToursDone(account.getC().getId(), page);
+//            case "opw" -> getMyToursOPW(account.getC().getId(), page);
+//            default -> null;
+//        };
+//    }
 
-        UserAccount account = userAccountRepository.findById(name)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+//    public Page<TourUnitResponse> getMyToursDone(int cid, int page){
+//        Pageable pageable = PageRequest.of(page, ITEM_OF_PAGE);
+//        Page<TourUnit> rs = tourUnitRepository.getMyToursDone(cid, pageable);
+//
+//        // Dùng map() với stream để chuyển đổi đối tượng TourUnit sang TourUnitResponse
+//        List<TourUnitResponse> responseList = rs.stream()
+//                .map(tourUnitMapper::toTourUnitResponseByFound)
+//                .collect(Collectors.toList());
+//
+//        // Trả về Page<TourUnitResponse> mới, với dữ liệu đã chuyển đổi
+//        return new PageImpl<>(responseList, pageable, rs.getTotalElements());
+//    }
+//
+//    public Page<TourUnitResponse> getMyToursOPW(int cid, int page){
+//        Pageable pageable = PageRequest.of(page, ITEM_OF_PAGE);
+//        Page<TourUnit> rs = tourUnitRepository.getMyToursOPW(cid, pageable);
+//
+//        // Dùng map() với stream để chuyển đổi đối tượng TourUnit sang TourUnitResponse
+//        List<TourUnitResponse> responseList = rs.stream()
+//                .map(tourUnitMapper::toTourUnitResponseByFound)
+//                .collect(Collectors.toList());
+//
+//        // Trả về Page<TourUnitResponse> mới, với dữ liệu đã chuyển đổi
+//        return new PageImpl<>(responseList, pageable, rs.getTotalElements());
+//    }
 
-        return switch (status){
-            case "done" -> getMyToursDone(account.getC().getId(), page);
-            case "opw" -> getMyToursOPW(account.getC().getId(), page);
-            default -> null;
-        };
-    }
-
-    public Page<TourUnitResponse> getMyToursDone(int cid, int page){
-        Pageable pageable = PageRequest.of(page, ITEM_OF_PAGE);
-        Page<TourUnit> rs = tourUnitRepository.getMyToursDone(cid, pageable);
-
-        // Dùng map() với stream để chuyển đổi đối tượng TourUnit sang TourUnitResponse
-        List<TourUnitResponse> responseList = rs.stream()
-                .map(tourUnitMapper::toTourUnitResponseByFound)
-                .collect(Collectors.toList());
-
-        // Trả về Page<TourUnitResponse> mới, với dữ liệu đã chuyển đổi
-        return new PageImpl<>(responseList, pageable, rs.getTotalElements());
-    }
-
-    public Page<TourUnitResponse> getMyToursOPW(int cid, int page){
-        Pageable pageable = PageRequest.of(page, ITEM_OF_PAGE);
-        Page<TourUnit> rs = tourUnitRepository.getMyToursOPW(cid, pageable);
-
-        // Dùng map() với stream để chuyển đổi đối tượng TourUnit sang TourUnitResponse
-        List<TourUnitResponse> responseList = rs.stream()
-                .map(tourUnitMapper::toTourUnitResponseByFound)
-                .collect(Collectors.toList());
-
-        // Trả về Page<TourUnitResponse> mới, với dữ liệu đã chuyển đổi
-        return new PageImpl<>(responseList, pageable, rs.getTotalElements());
+    /**
+     * Lấy các đơn vị tour theo tháng và năm
+     * @param month tháng
+     * @param year năm
+     * @return Danh sách các đơn vị tour theo tháng và năm
+     */
+    public List<TourUnitCalendarResponse> getTourUnitCalendar(int month, int year, String tourId){
+        List<TourUnit> tourUnits = tourUnitRepository.getTourUnitCalendar(month, year, tourId);
+        return tourUnits.stream().map(tourUnitCalendarMapper::tourUnitCalendarResponse).collect(Collectors.toList());
     }
 }

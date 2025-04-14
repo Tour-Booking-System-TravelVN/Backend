@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import vn.payos.PayOS;
 
@@ -17,17 +18,18 @@ import java.util.concurrent.TimeUnit;
 
 @SpringBootApplication
 @EnableScheduling
+@EnableSpringDataWebSupport(pageSerializationMode = EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO)
 public class TourbookingsytemApplication {
 
 //	private static AuthenticationService authenticationService;
 
-	@Value("${PAYOS_CLIENT_ID}")
+	@Value("${payos.client-id}")
 	private String clientId;
 
-	@Value("${PAYOS_API_KEY}")
+	@Value("${payos.api-key}")
 	private String apiKey;
 
-	@Value("${PAYOS_CHECKSUM_KEY}")
+	@Value("${payos.checksum-key}")
 	private String checksumKey;
 
 	@Bean

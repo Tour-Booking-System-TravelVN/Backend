@@ -151,6 +151,13 @@
             <version>1.0.3</version>
         </dependency>
 
+        <!-- HATEOAS -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-hateoas</artifactId>
+        </dependency>
+
+
     </dependencies>
 
     <dependencyManagement>
