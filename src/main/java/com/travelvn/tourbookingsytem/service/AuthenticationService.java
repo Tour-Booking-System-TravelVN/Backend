@@ -21,6 +21,8 @@ import com.travelvn.tourbookingsytem.model.InvalidatedToken;
 import com.travelvn.tourbookingsytem.model.UserAccount;
 import com.travelvn.tourbookingsytem.repository.InvalidatedTokenRepository;
 import com.travelvn.tourbookingsytem.repository.UserAccountRepository;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
@@ -30,6 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -174,13 +177,53 @@ public class AuthenticationService {
         var token = introspectRequest.getToken();
         boolean isValid = true;
 
+        log.info("ĐÃ ĐI VÀO");
+
         try {
             verifyToken(token, false);
         } catch (Exception e){
             isValid = false;
         }
 
+        log.info("ĐÃ ĐI RA");
 //        log.info("Flag1");
+
+        return IntrospectResponse.builder()
+                .valid(isValid)
+                .build();
+    }
+
+    public IntrospectResponse introspect(HttpServletRequest request)
+            throws JOSEException, ParseException {
+        String token = null;
+
+        // Lấy tất cả cookies từ request
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            // Duyệt qua các cookie để tìm cookie chứa token
+            for (Cookie cookie : cookies) {
+                if ("token".equals(cookie.getName())) {  // Kiểm tra cookie có tên "token"
+                    token = cookie.getValue();  // Lấy giá trị token
+                    break;
+                }
+            }
+        }
+
+        if (token == null) {
+            throw new JwtException("Token not found in cookies");
+        }
+
+        boolean isValid = true;
+
+        log.info("ĐÃ ĐI VÀO 2");
+
+        try {
+            verifyToken(token, true);  // Kiểm tra tính hợp lệ của token
+        } catch (Exception e) {
+            isValid = false;  // Nếu có lỗi thì token không hợp lệ
+        }
+
+        log.info("ĐÃ ĐI RA 2");
 
         return IntrospectResponse.builder()
                 .valid(isValid)
@@ -237,9 +280,12 @@ public class AuthenticationService {
 
         //Xác nhận token
         var verified = signedJWT.verify(verifier);
+        log.info(signedJWT.getJWTClaimsSet().getExpirationTime().toString());
 
-//        log.info(("Flag2"));
+        log.info("Token verification status: {}", verified);
+        log.info("Time exp: {}", expirationTime);
 
+        //Sửa thêm ! đk sau
         if(!(verified && expirationTime.after(new Date())))
             throw new AppException(ErrorCode.UNAUTHENTICATED);
 

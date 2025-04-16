@@ -25,6 +25,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter implements Bea
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
+//        String path = request.getRequestURI();
+//        if (path.equals("/auth/introspect")) {
+//            // Không cần set authentication ở đây, cứ cho đi tiếp
+//            filterChain.doFilter(request, response);
+////            return;
+//        }
+
         String jwtToken = resolveToken(request); // Lấy token từ cả cookie và header
 
         if (jwtToken != null && !jwtToken.isEmpty()) {

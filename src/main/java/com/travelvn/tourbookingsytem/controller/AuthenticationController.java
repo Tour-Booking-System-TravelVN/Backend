@@ -133,6 +133,8 @@ public class AuthenticationController {
     public ApiResponse<IntrospectResponse> introspect(HttpServletRequest request, HttpServletResponse response)
             throws ParseException, JOSEException {
 
+        log.info("INTROSPECT CONTROLLER");
+
         String token = jwtAuthenticationFilter.resolve(request);
 
         //Nếu không nhận được token nào => token không hợp lệ

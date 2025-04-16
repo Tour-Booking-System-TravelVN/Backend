@@ -134,6 +134,7 @@ public interface TourUnitRepository extends JpaRepository<TourUnit, String> {
                 ON tour.tour_id = temp.tour_id 
                 WHERE tour_unit.departure_date = temp.earliestDate 
                 ORDER BY discount.discount_value DESC, tour_unit.adult_tour_price ASC 
+                LIMIT 20
                 """, nativeQuery = true)
 //            "WHERE (tourunit.availableCapacity > 0) AND (tourunit.departureDate >= CURRENT_DATE ) " +
 //            "ORDER BY tourunit.adultTourPrice asc, tourunit.departureDate asc")
@@ -162,5 +163,49 @@ public interface TourUnitRepository extends JpaRepository<TourUnit, String> {
            @Param("month") int month,
            @Param("year") int year,
            @Param("tourId") String tourId
+    );
+
+    @Query(value = """
+            SELECT tour_unit.* FROM tour_unit 
+                JOIN tour ON tour.tour_id = tour_unit.tour_id 
+                JOIN ( 
+                	SELECT tour.tour_id, MIN(tour_unit.departure_date) AS earliestDate 
+                	FROM tour 
+                	JOIN tour_unit ON tour.tour_id = tour_unit.tour_id 
+                	JOIN category ON category.category_id = tour.category_id 
+                	WHERE (LOWER(category.category_name) = LOWER(:category)) AND (tour_unit.departure_date >= CURDATE()) AND (tour_unit.available_capacity>0) 
+                	GROUP BY tour.tour_id 
+                ) AS temp 
+                ON tour.tour_id = temp.tour_id 
+                WHERE tour_unit.departure_date = temp.earliestDate 
+                ORDER BY tour_unit.adult_tour_price ASC 
+                LIMIT 100
+                """, nativeQuery = true)
+//            "WHERE (tourunit.availableCapacity > 0) AND (tourunit.departureDate >= CURRENT_DATE ) " +
+//            "ORDER BY tourunit.adultTourPrice asc, tourunit.departureDate asc")
+    List<TourUnit> toursByCategory(
+            @Param("category") String category
+    );
+
+    @Query(value = """
+            SELECT tour_unit.* FROM tour_unit 
+                JOIN tour ON tour.tour_id = tour_unit.tour_id 
+                JOIN ( 
+                	SELECT tour.tour_id, MIN(tour_unit.departure_date) AS earliestDate 
+                	FROM tour 
+                	JOIN tour_unit ON tour.tour_id = tour_unit.tour_id 
+                	JOIN festival ON festival.festival_id = tour_unit.festival_id 
+                	WHERE (festival.festival_name = :festival) AND (tour_unit.departure_date >= CURDATE()) AND (tour_unit.available_capacity>0) 
+                	GROUP BY tour.tour_id 
+                ) AS temp 
+                ON tour.tour_id = temp.tour_id 
+                WHERE tour_unit.departure_date = temp.earliestDate 
+                ORDER BY tour_unit.adult_tour_price ASC 
+                LIMIT 100
+                """, nativeQuery = true)
+//            "WHERE (tourunit.availableCapacity > 0) AND (tourunit.departureDate >= CURRENT_DATE ) " +
+//            "ORDER BY tourunit.adultTourPrice asc, tourunit.departureDate asc")
+    List<TourUnit> toursByFestival(
+            @Param("festival") String festival
     );
 }

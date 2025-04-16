@@ -49,7 +49,8 @@ public class TourUnitService {
     private final UserAccountRepository userAccountRepository;
 
     private static final String INFINITY = "Infinity";
-    private static final Byte ITEM_OF_PAGE = (byte) 10;
+    private static final Short ITEM_OF_PAGE = (short) 500;
+    private static final Byte ACTUAL_ITEM_OF_PAGE = (byte) 100;
     private static final Byte MAX_ITEM_OF_TYPE = (byte) 20;
 
 //    private String keywords;
@@ -69,6 +70,8 @@ public class TourUnitService {
             case 1 -> hotTours(findTourRequest);
             case 2 -> discountedTours(findTourRequest);
             case 3 -> newTours(findTourRequest);
+            case 4 -> toursByCategory(findTourRequest);
+            case 5 -> toursByFestival(findTourRequest);
             default -> searchTour(findTourRequest);
         };
     }
@@ -103,7 +106,6 @@ public class TourUnitService {
             // Thêm điều kiện Subquery vào chính query chính
 //            predicates.add(cb.in(root.get("departureDate")).value(earliestDepartureDateSubquery));
 
-
             query.select(root).distinct(false).where(cb.and(predicates.toArray(new Predicate[0])))
                     .orderBy(cb.asc(root.get("adultTourPrice")), cb.asc(root.get("departureDate")));
 
@@ -112,16 +114,18 @@ public class TourUnitService {
                     .setMaxResults(ITEM_OF_PAGE)
                     .getResultList();
 
-            //Đảm bảo duy nhất đơn vị tour
-            Iterator<TourUnit> iterator = tours.iterator();
-            Set<String> tourIds = new HashSet<>();
+            log.info("MAX TUF: {}", tours.size());
 
-            while (iterator.hasNext()) {
-                TourUnit tourunit = iterator.next();
-                if (!tourIds.add(tourunit.getTour().getTourId())) {
-                    iterator.remove(); // Remove if tourId is already in the set
-                }
-            }
+            //Đảm bảo duy nhất đơn vị tour
+//            Iterator<TourUnit> iterator = tours.iterator();
+//            Set<String> tourIds = new HashSet<>();
+//
+//            while (iterator.hasNext()) {
+//                TourUnit tourunit = iterator.next();
+//                if (!tourIds.add(tourunit.getTour().getTourId())) {
+//                    iterator.remove(); // Remove if tourId is already in the set
+//                }
+//            }
 
             //Đếm số tour phù hợp
             CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
@@ -138,9 +142,34 @@ public class TourUnitService {
 
             Long totalCount = entityManager.createQuery(countQuery).getSingleResult();
 
+
+            // Tạo danh sách mới để chứa các TourUnit không trùng tourId
+            List<TourUnit> uniqueTours = new ArrayList<>();
+            byte count = 0;
+//            long size = ACTUAL_ITEM_OF_PAGE > totalCount ? totalCount : ACTUAL_ITEM_OF_PAGE;
+
+            //Đảm bảo duy nhất đơn vị tour
+            Iterator<TourUnit> iterator = tours.iterator();
+            Set<String> tourIds = new HashSet<>();
+
+            while (iterator.hasNext()) {
+                TourUnit tourunit = iterator.next();
+                if (tourIds.add(tourunit.getTour().getTourId())) {
+//                    iterator.remove(); // Remove if tourId is already in the set
+//                    log.info(count + ": " +tourunit.getTour().getTourId());
+                    uniqueTours.add(tourunit);
+                    count++;
+                    if(count == ACTUAL_ITEM_OF_PAGE){
+                        break;
+                    }
+                }
+            }
+
+            log.info("MAX TUF2: {}", uniqueTours.size());
+
             return ApiResponse.<List<TourUnitResponse>>builder()
                     .message("Có " + totalCount + " kết quả phù hợp")
-                    .result(/*List<TourResponse> responseList = */tours.stream()
+                    .result(/*List<TourResponse> responseList = */uniqueTours.stream()
 //                    .map(tourUnitMapper::toTourUnitResponseByFound)
                             .map(tourUnit -> {
                                 TourUnitResponse res = tourUnitMapper.toTourUnitResponseByFound(tourUnit);
@@ -379,6 +408,73 @@ public class TourUnitService {
 
             return ApiResponse.<List<TourUnitResponse>>builder()
                     .message("Có " + itemsQuant + " tour mới")
+                    .result(/*List<TourResponse> responseList = */tours.stream()
+//                    .map(tourUnitMapper::toTourUnitResponseByFound)
+                            .map(tourUnit -> {
+                                TourUnitResponse res = tourUnitMapper.toTourUnitResponseByFound(tourUnit);
+                                if (res.getTour() != null) {
+                                    tourMapper.setFirstImageUrl(tourUnit.getTour(), res.getTour());
+                                }
+                                return res;
+                            })
+                            .collect(Collectors.toList()))
+                    .build();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+//        return null;
+    }
+
+    /**
+     * Danh sách tour theo thể loại
+     *
+     * @param findTourRequest thông tin tìm kiếm
+     * @return Danh sách tour phù hợp
+     */
+    public ApiResponse<List<TourUnitResponse>> toursByCategory(FindTourRequest findTourRequest){
+        try {
+            List<TourUnit> tours = tourUnitRepository.toursByCategory(findTourRequest.getCategory());
+
+            int itemsQuant = ACTUAL_ITEM_OF_PAGE < tours.size() ? ACTUAL_ITEM_OF_PAGE : tours.size();
+
+            return ApiResponse.<List<TourUnitResponse>>builder()
+                    .message("Có " + itemsQuant + " tour "+findTourRequest.getCategory().toLowerCase())
+                    .result(/*List<TourResponse> responseList = */tours.stream()
+//                    .map(tourUnitMapper::toTourUnitResponseByFound)
+                            .map(tourUnit -> {
+                                TourUnitResponse res = tourUnitMapper.toTourUnitResponseByFound(tourUnit);
+                                if (res.getTour() != null) {
+                                    tourMapper.setFirstImageUrl(tourUnit.getTour(), res.getTour());
+                                }
+                                return res;
+                            })
+                            .collect(Collectors.toList()))
+                    .build();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+//        return null;
+    }
+
+
+    /**
+     * Danh sách tour theo lễ hội
+     *
+     * @param findTourRequest thông tin tìm kiếm
+     * @return Danh sách tour phù hợp
+     */
+    public ApiResponse<List<TourUnitResponse>> toursByFestival(FindTourRequest findTourRequest){
+        try {
+            List<TourUnit> tours = tourUnitRepository.toursByFestival(findTourRequest.getFestival());
+
+            int itemsQuant = ACTUAL_ITEM_OF_PAGE < tours.size() ? ACTUAL_ITEM_OF_PAGE : tours.size();
+
+            return ApiResponse.<List<TourUnitResponse>>builder()
+                    .message("Có " + itemsQuant + " tour dịp lễ " +findTourRequest.getFestival())
                     .result(/*List<TourResponse> responseList = */tours.stream()
 //                    .map(tourUnitMapper::toTourUnitResponseByFound)
                             .map(tourUnit -> {

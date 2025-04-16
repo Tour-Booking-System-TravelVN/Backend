@@ -31,4 +31,8 @@ public class FindTourRequest {
     private int page;
 
     private int type;
+
+    private String category;
+
+    private String festival;
 }
