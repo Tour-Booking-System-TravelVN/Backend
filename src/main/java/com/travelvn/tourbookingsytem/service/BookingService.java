@@ -346,7 +346,7 @@ public class BookingService {
         if (discount != null) {
             if ("%".equals(discount.getDiscountUnit())) {
                 adultPrice = adultPrice.multiply(BigDecimal.valueOf(1).subtract(discount.getDiscountValue().divide(BigDecimal.valueOf(100))));
-                adultPrice = adultPrice.multiply(BigDecimal.valueOf(1).subtract(discount.getDiscountValue().divide(BigDecimal.valueOf(100))));
+                childPrice = childPrice.multiply(BigDecimal.valueOf(1).subtract(discount.getDiscountValue().divide(BigDecimal.valueOf(100))));
                 toddlerPrice = toddlerPrice.multiply(BigDecimal.valueOf(1).subtract(discount.getDiscountValue().divide(BigDecimal.valueOf(100))));
             } else if ("VND".equals(discount.getDiscountUnit())) {
                 adultPrice = adultPrice.subtract(discount.getDiscountValue());
@@ -361,6 +361,14 @@ public class BookingService {
         toddlerPrice = toddlerPrice.setScale(0, RoundingMode.HALF_UP);
         privateRoomPrice = privateRoomPrice.setScale(0, RoundingMode.HALF_UP);
 
+
+        log.info("TI: {}", tourUnit.getTourUnitId());
+        log.info("DISCOUNT: {}", tourUnit.getDiscount());
+        log.info("AP: {}", adultPrice);
+        log.info("CP: {}", childPrice);
+        log.info("TP: {}", toddlerPrice);
+        log.info("BP: {}", babyPrice);
+        log.info("PP: {}", privateRoomPrice);
 
         // Tính tổng gốc
         BigDecimal total = adultPrice.multiply(BigDecimal.valueOf(request.getAdultNumber()))
