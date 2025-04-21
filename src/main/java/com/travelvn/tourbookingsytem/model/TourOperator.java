@@ -33,7 +33,7 @@ public class TourOperator {
     private LocalDate dateOfBirth;
 
     @Column(name = "gender", nullable = false)
-    private Boolean gender = false;
+    private boolean gender;
 
     @Column(name = "address", nullable = false)
     private String address;
@@ -57,32 +57,36 @@ public class TourOperator {
     private LocalDate endDate;
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "tourOperator")
+    @OneToMany(mappedBy = "tourOperator",cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private Set<Tour> tourCreatedSet = new HashSet<>();
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "lastUpdatedOperator")
+    @OneToMany(mappedBy = "lastUpdatedOperator", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private Set<Tour> tourUpdatedSet = new HashSet<>();
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "tourOperator")
+    @OneToMany(mappedBy = "tourOperator", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private Set<TourUnit> tourUnitCreatedSet = new HashSet<>();
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "lastUpdatedOperator")
+    @OneToMany(mappedBy = "lastUpdatedOperator", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private Set<Tour> tourUnitUpdatedSet = new HashSet<>();
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "tourOperator")
+    @OneToMany(mappedBy = "tourOperator", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private Set<Guide> guideSet = new HashSet<>();
 
     @ToString.Exclude
-    @OneToOne(mappedBy = "tourOperator")
+    @OneToOne(mappedBy = "tourOperator", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private UserAccount userAccount;
+
+    public boolean getGender() {
+        return gender;
+    }
 }

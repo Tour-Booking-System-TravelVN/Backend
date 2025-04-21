@@ -1,6 +1,6 @@
 package com.travelvn.tourbookingsytem.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,19 +19,16 @@ public class TourRating {
 
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JsonIgnore
     @JoinColumn(name = "tour_unit_id", nullable = false)
     private TourUnit tourUnit;
 
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JsonIgnore
     @JoinColumn(name = "administrator_id", nullable = false)
     private Administrator administrator;
 
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JsonIgnore
     @JoinColumn(name = "c_id", nullable = false)
     private Customer c;
 
@@ -45,4 +42,37 @@ public class TourRating {
     @Column(name = "status", nullable = false)
     private String status;
 
+    // Getter tùy chỉnh để chỉ lấy tourUnitId
+    @JsonProperty("tourUnitId")
+    public String getTourUnitId() {
+        return tourUnit != null ? tourUnit.getTourUnitId() : null;
+    }
+
+//    // Getter tùy chỉnh để chỉ lấy administratorId
+//    @JsonProperty("administratorId")
+//    public Integer getAdministratorId() {
+//        return administrator != null ? administrator.getId() : null;
+//    }
+
+    // Getter tùy chỉnh để chỉ lấy customerId
+    @JsonProperty("customerId")
+    public Integer getCustomerId() {
+        return c != null ? c.getId() : null;
+    }
+
+    // Bỏ serialize các trường quan hệ gốc
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    public TourUnit getTourUnit() {
+        return tourUnit;
+    }
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    public Administrator getAdministrator() {
+        return administrator;
+    }
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    public Customer getC() {
+        return c;
+    }
 }

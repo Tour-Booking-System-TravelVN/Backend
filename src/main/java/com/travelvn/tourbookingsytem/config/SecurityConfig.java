@@ -14,6 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
@@ -190,17 +191,31 @@ public class SecurityConfig {
      * @throws Exception
      */
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        // Tắt CSRF
-        httpSecurity
-                .csrf().disable() // Tắt CSRF
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf().disable()
+                .cors() // 👉 Bắt buộc thêm dòng này
+                .and()
                 .authorizeHttpRequests()
-                .requestMatchers(HttpMethod.GET, "/**").permitAll()  // Cho phép tất cả các GET request
-                .requestMatchers(HttpMethod.POST, "/**").permitAll() // Cho phép tất cả các POST request
-                .requestMatchers(HttpMethod.PUT, "/**").permitAll()  // Cho phép tất cả các PUT request
-                .requestMatchers(HttpMethod.DELETE, "/**").permitAll() // Cho phép tất cả các DELETE request
-                .anyRequest().permitAll(); // Cho phép tất cả các yêu cầu khác
+                .requestMatchers(HttpMethod.GET, "/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/**").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/**").permitAll()
+                .requestMatchers(HttpMethod.DELETE, "/**").permitAll()
+                .anyRequest().permitAll();
 
-        return httpSecurity.build();
+        return http.build();
     }
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.addAllowedOriginPattern("*"); // Cho phép mọi domain (có thể thay bằng cụ thể nếu cần)
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
+
 }

@@ -79,15 +79,15 @@ public ResponseEntity<Booking> createBooking(@RequestBody BookingRequest request
         return ResponseEntity.ok(bookingService.getPendingCancelBookings());
     }
 // cấp nật hủy theo id(chưa dl)
-    @PostMapping("/{bookingId}/approve-cancel")
-    public ResponseEntity<Booking> approveCancelRequest(@PathVariable String bookingId) {
-        Booking updatedBooking = bookingService.approveCancelRequest(bookingId);
+    @PostMapping("/{id}/approve-cancel")
+    public ResponseEntity<Booking> approveCancelRequest(@PathVariable String id) {
+        Booking updatedBooking = bookingService.approveCancelRequest(id);
         return updatedBooking != null ? ResponseEntity.ok(updatedBooking) : ResponseEntity.badRequest().build();
     }
 // khonog hủy theo id(chưa dl)
-    @PostMapping("/{bookingId}/reject-cancel")
-    public ResponseEntity<Booking> rejectCancelRequest(@PathVariable String bookingId) {
-        Booking updatedBooking = bookingService.rejectCancelRequest(bookingId);
+    @PostMapping("/{id}/reject-cancel")
+    public ResponseEntity<Booking> rejectCancelRequest(@PathVariable String id) {
+        Booking updatedBooking = bookingService.rejectCancelRequest(id);
         return updatedBooking != null ? ResponseEntity.ok(updatedBooking) : ResponseEntity.badRequest().build();
     }
 }

@@ -42,6 +42,10 @@ public class TourOperatorService {
     }
 
     public void deleteTourOperator(Integer id) {
+        Optional<TourOperator> tourOperator = tourOperatorRepository.findById(id);
+        if (!tourOperator.isPresent()) {
+            throw new RuntimeException("Tour Operator with ID " + id + " not found");
+        }
         tourOperatorRepository.deleteById(id);
     }
 

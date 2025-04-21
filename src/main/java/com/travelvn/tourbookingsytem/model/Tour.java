@@ -1,6 +1,7 @@
 package com.travelvn.tourbookingsytem.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,19 +24,20 @@ public class Tour {
 
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JsonIgnore
     @JoinColumn(name = "category_id", nullable = false)
+    @JsonIgnore
     private Category category;
 
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JsonIgnore
     @JoinColumn(name = "tour_operator_id", nullable = false)
+    @JsonIgnore
     private TourOperator tourOperator;
 
     @ToString.Exclude
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "last_updated_operator")
+    @JsonIgnore
     private TourOperator lastUpdatedOperator;
 
     @Column(name = "tour_name", nullable = false)
@@ -81,17 +83,35 @@ public class Tour {
     private String exclusions;
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "tour")
+    @OneToMany(mappedBy = "tour",cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
+    @Builder.Default
     private Set<TourProgram> tourProgramSet = new HashSet<>();
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "tour")
+    @OneToMany(mappedBy = "tour",cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
+    @Builder.Default
     private Set<Image> imageSet = new HashSet<>();
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "tour")
+    @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
+    @Builder.Default
     private Set<TourUnit> tourUnitSet = new HashSet<>();
+
+    @JsonProperty("categoryId")
+    public Integer getCategoryId() {
+        return category != null ? category.getId() : null;
+    }
+
+    @JsonProperty("tourOperatorId")
+    public Integer getTourOperatorId() {
+        return tourOperator != null ? tourOperator.getId() : null;
+    }
+
+    @JsonProperty("lastUpdatedOperatorId")
+    public Integer getLastUpdatedOperatorId() {
+        return lastUpdatedOperator != null ? lastUpdatedOperator.getId() : null;
+    }
 }

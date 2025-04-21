@@ -32,7 +32,7 @@ public class Discount {
     private String discountUnit;
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "discount")
+    @OneToMany(mappedBy = "discount",cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private Set<TourUnit> tourUnitSet = new HashSet<>();
 }

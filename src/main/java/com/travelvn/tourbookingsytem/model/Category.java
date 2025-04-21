@@ -28,7 +28,7 @@ public class Category {
     private String description;
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "category")
+    @OneToMany(mappedBy = "category",cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore  // Ngăn chặn vòng lặp khi serialize JSON
     private Set<Tour> tourSet = new HashSet<>();
 }

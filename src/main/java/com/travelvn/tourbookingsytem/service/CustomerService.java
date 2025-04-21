@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @FieldDefaults(makeFinal = true)
@@ -27,7 +29,23 @@ public class CustomerService {
         Optional<Customer> customer = customerRepository.findById(id);
         return customer.orElse(null);
     }
+    // Tìm kiếm khách hàng theo tên (firstname, lastname, hoặc fullname)
+    public List<Customer> searchCustomersByName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            return customerRepository.findAll(); // Nếu không có tên tìm kiếm, trả về toàn bộ danh sách
+        }
 
+        // Tìm kiếm theo firstname hoặc lastname
+        List<Customer> byFirstOrLastName = customerRepository.findByFirstnameContainingIgnoreCaseOrLastnameContainingIgnoreCase(name, name);
+
+        // Tìm kiếm theo fullname
+        List<Customer> byFullname = customerRepository.findByFullnameContainingIgnoreCase(name);
+
+        // Kết hợp kết quả và loại bỏ trùng lặp
+        return Stream.concat(byFirstOrLastName.stream(), byFullname.stream())
+                .distinct()
+                .collect(Collectors.toList());
+    }
     // Thêm khách hàng mới
     public Customer createCustomer(Customer customer) {
         // Đảm bảo id là null để database tự sinh

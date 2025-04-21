@@ -35,7 +35,7 @@ public class    Customer {
     private LocalDate dateOfBirth;
 
     @Column(name = "gender", nullable = false)
-    private Boolean gender = false;
+    private boolean gender;
 
     @Column(name = "nationality")
     private String nationality;
@@ -63,16 +63,20 @@ public class    Customer {
 
     @ToString.Exclude
     @JsonIgnore
-    @OneToMany(mappedBy = "c")
+    @OneToMany(mappedBy = "c",cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Booking> bookingSet = new HashSet<>();
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "c")
+    @OneToMany(mappedBy = "c",cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private Set<CompanionCustomer> companionCustomerSet = new HashSet<>();
 
     @ToString.Exclude
     @JsonIgnore
-    @OneToMany(mappedBy = "c")
+    @OneToMany(mappedBy = "c",cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<TourRating> tourRatingSet = new HashSet<>();
+
+    public boolean getGender() {
+        return gender;
+    }
 }

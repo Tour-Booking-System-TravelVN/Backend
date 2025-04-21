@@ -8,6 +8,7 @@ import com.travelvn.tourbookingsytem.exception.ErrorCode;
 import com.travelvn.tourbookingsytem.mapper.UserAccountMapper;
 import com.travelvn.tourbookingsytem.model.UserAccount;
 import com.travelvn.tourbookingsytem.repository.UserAccountRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,19 +94,19 @@ public class UserAccountService {
     }
 
     public UserAccount updateUserAccount(String username, UserAccount userAccountDetails) {
-        Optional<UserAccount> userAccountOptional = userAccountRepository.findById(username);
-        if (userAccountOptional.isPresent()) {
-            UserAccount userAccount = userAccountOptional.get();
-            userAccount.setEmail(userAccountDetails.getEmail());
-            userAccount.setStatus(userAccountDetails.getStatus());
-            userAccount.setRole(userAccountDetails.getRole());
-//            // Nếu mật khẩu được cập nhật, mã hóa lại
-//            if (userAccountDetails.getPassword() != null && !userAccountDetails.getPassword().isEmpty()) {
-//                userAccount.setPassword(passwordEncoder.encode(userAccountDetails.getPassword()));
-//            }
+        UserAccount userAccount = userAccountRepository.findById(username)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        userAccount.setEmail(userAccountDetails.getEmail());
+        userAccount.setStatus(userAccountDetails.getStatus());
+        if (userAccountDetails.getPassword() != null && !userAccountDetails.getPassword().isEmpty()) {
+            userAccount.setPassword(passwordEncoder.encode(userAccountDetails.getPassword()));
         }
-        return null;
+
+        return userAccountRepository.save(userAccount);
     }
+
+
 
     public void deleteUserAccount(String username) {
         userAccountRepository.deleteById(username);

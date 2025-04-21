@@ -157,11 +157,11 @@ public class BookingService {
         Optional<Booking> bookingOptional = bookingRepository.findById(bookingId);
         if (bookingOptional.isPresent()) {
             Booking booking = bookingOptional.get();
-            if ("P".equals(booking.getStatus())) {
-                booking.setStatus("C");
+            if ("W".equals(booking.getStatus())) {
+                booking.setStatus("D");
                 return bookingRepository.save(booking);
             }
-            throw new IllegalStateException("Booking is not in PENDING_CANCEL status");
+            throw new IllegalStateException("Booking is not in W status");
         }
         return null;
     }
@@ -170,11 +170,11 @@ public class BookingService {
         Optional<Booking> bookingOptional = bookingRepository.findById(bookingId);
         if (bookingOptional.isPresent()) {
             Booking booking = bookingOptional.get();
-            if ("P".equals(booking.getStatus())) {
-                booking.setStatus("D");
+            if ("W".equals(booking.getStatus())) {
+                booking.setStatus("C");
                 return bookingRepository.save(booking);
             }
-            throw new IllegalStateException("Booking is not in PENDING_CANCEL status");
+            throw new IllegalStateException("Booking is not in W status");
         }
         return null;
     }

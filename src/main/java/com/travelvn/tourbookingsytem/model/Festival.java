@@ -34,7 +34,7 @@ public class Festival {
     private Boolean displayStatus = false;
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "festival")
+    @OneToMany(mappedBy = "festival", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private Set<TourUnit> tourUnitSet = new HashSet<>();
 }

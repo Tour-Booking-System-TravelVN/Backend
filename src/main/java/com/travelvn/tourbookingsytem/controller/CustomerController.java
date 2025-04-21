@@ -29,6 +29,12 @@ public class CustomerController {
         return ResponseEntity.notFound().build();
     }
 
+    // Tìm kiếm khách hàng theo tên
+    @GetMapping("/search")
+    public ResponseEntity<List<Customer>> searchCustomersByName(@RequestParam("name") String name) {
+        List<Customer> customers = customerService.searchCustomersByName(name);
+        return ResponseEntity.ok(customers);
+    }
     @PostMapping
     public ResponseEntity<Customer> createCustomer(@Valid @RequestBody Customer customer) {
         return ResponseEntity.ok(customerService.createCustomer(customer));

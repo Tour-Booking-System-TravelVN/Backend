@@ -9,6 +9,10 @@ import org.mapstruct.*;
 @Mapper(componentModel = "spring"/*, unmappedTargetPolicy = ReportingPolicy.IGNORE*/)
 public interface CustomerMapper {
     Customer toCustomer(CustomerRequest customerRequest);
+    // Phương thức ánh xạ từ Boolean sang byte
+    default byte map(Boolean value) {
+        return (value != null && value) ? (byte) 1 : (byte) 0;
+    }
 //    Customer toCustomer(CustomerResponse customerResponse);
 
 //    CustomerRequest toCustomerRequest(Customer customer);

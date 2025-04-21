@@ -9,7 +9,9 @@ import org.mapstruct.Mapper;
 public interface CompanionCustomerMapper {
     CompanionCustomer toCompanionCustomer(CompanionCustomerRequest companionCustomerRequest);
 //    CompanionCustomer toCompanionCustomer(CompanionCustomerResponse companionCustomerResponse);
-
+default byte map(Boolean value) {
+    return value != null && value ? (byte) 1 : (byte) 0;
+}
 //    CompanionCustomerRequest toCompanionCustomerRequest(CompanionCustomer companionCustomer);
     CompanionCustomerResponse toCompanionCustomerResponse(CompanionCustomer companionCustomer);
 }

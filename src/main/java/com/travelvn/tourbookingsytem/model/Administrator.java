@@ -25,6 +25,6 @@ public class Administrator {
     private UserAccount userAccount;
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "administrator")
+    @OneToMany(mappedBy = "administrator", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<TourRating> tourRatingSet = new HashSet<>();
 }
