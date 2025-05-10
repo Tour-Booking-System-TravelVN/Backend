@@ -1,6 +1,13 @@
 package com.travelvn.tourbookingsytem.service;
 
+import com.travelvn.tourbookingsytem.dto.request.TourRequest;
+import com.travelvn.tourbookingsytem.dto.response.TourResponse;
+import com.travelvn.tourbookingsytem.mapper.TourMapper;
+import com.travelvn.tourbookingsytem.model.Category;
 import com.travelvn.tourbookingsytem.model.Tour;
+import com.travelvn.tourbookingsytem.model.TourOperator;
+import com.travelvn.tourbookingsytem.repository.CategoryRepository;
+import com.travelvn.tourbookingsytem.repository.TourOperatorRepository;
 import com.travelvn.tourbookingsytem.repository.TourRepository;
 import com.travelvn.tourbookingsytem.util.TourIdGenerator;
 import org.slf4j.Logger;
@@ -12,12 +19,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TourService {
 
     private static final Logger logger = LoggerFactory.getLogger(TourService.class);
     private static final int MAX_ATTEMPTS = 10;
+    @Autowired
+    private TourOperatorRepository tourOperatorRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     @Autowired
     private TourRepository tourRepository;
@@ -25,34 +38,48 @@ public class TourService {
     @Autowired
     private TourIdGenerator tourIdGenerator;
 
-    // Lấy danh sách tất cả tour
-    public List<Tour> getAllTours() {
+    @Autowired
+    private TourMapper tourMapper;
+
+    public List<TourResponse> getAllTours() {
         logger.info("Fetching all tours");
         List<Tour> tours = tourRepository.findAll();
         logger.debug("Found {} tours", tours.size());
-        return tours;
+        return tours.stream().map(tourMapper::toResponse).collect(Collectors.toList());
     }
 
-    // Lấy thông tin tour theo ID
-    public Tour getTourById(String id) {
+    public TourResponse getTourById(String id) {
         if (id == null || id.trim().isEmpty()) {
             logger.error("Tour ID must not be null or empty");
             throw new IllegalArgumentException("Tour ID must not be null or empty");
         }
 
         logger.info("Fetching tour with ID: {}", id);
-        Optional<Tour> tour = tourRepository.findByTourId(id); // Sử dụng phương thức mới
+        Optional<Tour> tour = tourRepository.findByTourId(id);
         if (tour.isPresent()) {
             logger.debug("Found tour: {}", tour.get());
-            return tour.get();
+            return tourMapper.toResponse(tour.get());
         } else {
             logger.warn("Tour with ID {} not found", id);
             throw new RuntimeException("Tour with ID " + id + " not found");
         }
     }
+    public Optional<Tour> searchTourById(String tourId) {
+        logger.info("Searching tour by ID: {}", tourId);
+        return tourRepository.findByTourId(tourId);
+    }
 
-    // Tìm tour theo tên địa danh hoặc tên tour
-    public List<Tour> searchToursByLocationOrName(String keyword) {
+    public Optional<Tour> findById(String id) {
+        logger.info("Searching tour by ID: {}", id);
+        return tourRepository.findById(id);
+    }
+
+    public List<Tour> searchByNameOrLocation(String keyword) {
+        logger.info("Searching tours by keyword (name/place): {}", keyword);
+        return tourRepository.searchByNameOrPlace(keyword);
+    }
+
+    public List<TourResponse> searchToursByLocationOrName(String keyword) {
         if (keyword == null || keyword.trim().isEmpty()) {
             logger.warn("Search keyword must not be null or empty");
             throw new IllegalArgumentException("Search keyword must not be null or empty");
@@ -61,98 +88,72 @@ public class TourService {
         logger.info("Searching tours with keyword: {}", keyword);
         List<Tour> tours = tourRepository.findByLocationOrTourNameContaining(keyword.trim());
         logger.debug("Found {} tours for keyword '{}'", tours.size(), keyword);
-        return tours;
+        return tours.stream().map(tourMapper::toResponse).collect(Collectors.toList());
     }
 
-    // Thêm tour mới
     @Transactional
-    public Tour createTour(Tour tour) {
-        if (tour == null) {
-            logger.error("Tour must not be null");
-            throw new IllegalArgumentException("Tour must not be null");
+    public TourResponse createTour(TourRequest tourRequest) {
+        logger.info("Starting to create Tour from request: {}", tourRequest);
+        Tour tour = tourMapper.toEntity(tourRequest);
+
+        // MUST: fetch managed entities instead of transient
+        if (tourRequest.getTourOperatorId() != null) {
+            TourOperator operator = tourOperatorRepository.findById(tourRequest.getTourOperatorId())
+                    .orElseThrow(() -> new RuntimeException("TourOperator not found"));
+            tour.setTourOperator(operator);
         }
-        if (tour.getDuration() == null || tour.getDuration().trim().isEmpty()) {
-            logger.error("Duration must not be null or empty");
-            throw new IllegalArgumentException("Duration must not be null or empty");
+
+        if (tourRequest.getLastUpdatedOperator() != null) {
+            TourOperator updater = tourOperatorRepository.findById(tourRequest.getLastUpdatedOperator())
+                    .orElseThrow(() -> new RuntimeException("LastUpdatedOperator not found"));
+            tour.setLastUpdatedOperator(updater);
         }
 
-        logger.info("Starting to create Tour: {}", tour);
+        if (tourRequest.getCategoryId() != null) {
+            Category category = categoryRepository.findById(tourRequest.getCategoryId())
+                    .orElseThrow(() -> new RuntimeException("Category not found"));
+            tour.setCategory(category);
+        }
 
-        // Đảm bảo tourId là null để tự sinh
-        tour.setTourId(null);
-
-        // Tạo tourId và lưu, thử lại nếu trùng lặp
         int attempts = 0;
         while (attempts < MAX_ATTEMPTS) {
             try {
-                // Truyền duration để sinh tourId
                 String tourId = tourIdGenerator.generateTourId(tour.getDuration());
-                logger.debug("Generated tourId: {}", tourId);
                 tour.setTourId(tourId);
-
-                // Lưu vào database
-                logger.debug("Saving Tour to database: {}", tour);
                 Tour savedTour = tourRepository.save(tour);
-                logger.info("Successfully saved Tour with ID: {}", savedTour.getTourId());
-                return savedTour;
+                return tourMapper.toResponse(savedTour);
             } catch (DataIntegrityViolationException e) {
-                logger.warn("TourId {} already exists, retrying... Attempt {}", tour.getTourId(), attempts + 1);
                 attempts++;
                 if (attempts >= MAX_ATTEMPTS) {
-                    logger.error("Failed to generate a unique tourId after {} attempts", MAX_ATTEMPTS);
-                    throw new RuntimeException("tour.id.generation.failed");
+                    throw new RuntimeException("Failed to generate unique tourId");
                 }
-            } catch (Exception e) {
-                logger.error("Failed to save Tour: {}", e.getMessage(), e);
-                throw new RuntimeException("tour.save.failed: " + e.getMessage(), e);
             }
         }
 
-        return null;
+        throw new IllegalStateException("Unexpected error during tour creation");
     }
 
-    // Cập nhật thông tin tour
+
+
     @Transactional
-    public Tour updateTour(String id, Tour tourDetails) {
+    public TourResponse updateTour(String id, TourRequest tourRequest) {
         if (id == null || id.trim().isEmpty()) {
-            logger.error("Tour ID must not be null or empty");
             throw new IllegalArgumentException("Tour ID must not be null or empty");
         }
-        if (tourDetails == null) {
-            logger.error("Tour details must not be null");
-            throw new IllegalArgumentException("Tour details must not be null");
-        }
 
-        logger.info("Updating tour with ID: {}", id);
-        Optional<Tour> tourOptional = tourRepository.findById(id);
+        Optional<Tour> tourOptional = tourRepository.findByTourId(id); // SỬA Ở ĐÂY ✅
+
         if (tourOptional.isPresent()) {
             Tour tour = tourOptional.get();
-            tour.setTourName(tourDetails.getTourName());
-            tour.setDescription(tourDetails.getDescription());
-            tour.setDuration(tourDetails.getDuration());
-            tour.setVehicle(tourDetails.getVehicle());
-            tour.setTargetAudience(tourDetails.getTargetAudience());
-            tour.setDeparturePlace(tourDetails.getDeparturePlace());
-            tour.setPlacesToVisit(tourDetails.getPlacesToVisit());
-            tour.setCuisine(tourDetails.getCuisine());
-            tour.setCreatedTime(tourDetails.getCreatedTime());
-            tour.setLastUpdatedTime(tourDetails.getLastUpdatedTime());
-            tour.setInclusions(tourDetails.getInclusions());
-            tour.setExclusions(tourDetails.getExclusions());
-            tour.setIdealTime(tourDetails.getIdealTime());
-            tour.setTourOperator(tourDetails.getTourOperator());
-
-            logger.debug("Saving updated tour: {}", tour);
+            tourMapper.updateEntityFromRequest(tourRequest, tour);
             Tour updatedTour = tourRepository.save(tour);
-            logger.info("Successfully updated tour with ID: {}", updatedTour.getTourId());
-            return updatedTour;
+            return tourMapper.toResponse(updatedTour);
         } else {
-            logger.warn("Tour with ID {} not found", id);
             throw new RuntimeException("Tour with ID " + id + " not found");
         }
     }
 
-    // Xóa tour
+
     @Transactional
     public void deleteTour(String id) {
         if (id == null || id.trim().isEmpty()) {

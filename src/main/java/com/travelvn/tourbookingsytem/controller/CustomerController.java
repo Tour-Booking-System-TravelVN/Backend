@@ -1,13 +1,15 @@
 package com.travelvn.tourbookingsytem.controller;
-import com.travelvn.tourbookingsytem.model.Customer;
+
+import com.travelvn.tourbookingsytem.dto.request.CustomerRequest;
+import com.travelvn.tourbookingsytem.dto.response.CustomerResponse;
 import com.travelvn.tourbookingsytem.service.CustomerService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
 import java.util.List;
-//test toan bo xong
+
 @RestController
 @RequestMapping("/api/customers")
 public class CustomerController {
@@ -16,37 +18,30 @@ public class CustomerController {
     private CustomerService customerService;
 
     @GetMapping
-    public ResponseEntity<List<Customer>> getAllCustomers() {
+    public ResponseEntity<List<CustomerResponse>> getAllCustomers() {
         return ResponseEntity.ok(customerService.getAllCustomers());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Customer> getCustomerById(@PathVariable Integer id) {
-        Customer customer = customerService.getCustomerById(id);
-        if (customer != null) {
-            return ResponseEntity.ok(customer);
-        }
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<CustomerResponse> getCustomerById(@PathVariable Integer id) {
+        CustomerResponse customer = customerService.getCustomerById(id);
+        return customer != null ? ResponseEntity.ok(customer) : ResponseEntity.notFound().build();
     }
 
-    // Tìm kiếm khách hàng theo tên
     @GetMapping("/search")
-    public ResponseEntity<List<Customer>> searchCustomersByName(@RequestParam("name") String name) {
-        List<Customer> customers = customerService.searchCustomersByName(name);
-        return ResponseEntity.ok(customers);
+    public ResponseEntity<List<CustomerResponse>> searchCustomersByName(@RequestParam("name") String name) {
+        return ResponseEntity.ok(customerService.searchCustomersByName(name));
     }
+
     @PostMapping
-    public ResponseEntity<Customer> createCustomer(@Valid @RequestBody Customer customer) {
-        return ResponseEntity.ok(customerService.createCustomer(customer));
+    public ResponseEntity<CustomerResponse> createCustomer(@Valid @RequestBody CustomerRequest customerRequest) {
+        return ResponseEntity.ok(customerService.createCustomer(customerRequest));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Customer> updateCustomer(@PathVariable Integer id, @Valid @RequestBody Customer customerDetails) {
-        Customer updatedCustomer = customerService.updateCustomer(id, customerDetails);
-        if (updatedCustomer != null) {
-            return ResponseEntity.ok(updatedCustomer);
-        }
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<CustomerResponse> updateCustomer(@PathVariable Integer id, @Valid @RequestBody CustomerRequest customerRequest) {
+        CustomerResponse updatedCustomer = customerService.updateCustomer(id, customerRequest);
+        return updatedCustomer != null ? ResponseEntity.ok(updatedCustomer) : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")

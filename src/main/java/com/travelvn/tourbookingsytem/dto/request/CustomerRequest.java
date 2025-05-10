@@ -14,12 +14,10 @@ import java.time.LocalDate;
 @Builder
 @ToString
 public class CustomerRequest {
-//    private Integer id;
     private String firstname;
     private String lastname;
 
-    @DobConstraint(min = 0, message = "INVALID_DOB")
-    @JsonProperty("dob")
+    @DobConstraint(message = "Ngày sinh phải trước hôm nay", min = 0)
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOfBirth;
 
@@ -30,5 +28,4 @@ public class CustomerRequest {
     private String phoneNumber;
     private String note;
     private String address;
-//    private UserAccountRequest userAccount;
-}
+} 

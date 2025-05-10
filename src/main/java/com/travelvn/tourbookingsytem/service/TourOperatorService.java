@@ -1,55 +1,66 @@
 package com.travelvn.tourbookingsytem.service;
 
-
+import com.travelvn.tourbookingsytem.dto.request.TourOperatorRequest;
+import com.travelvn.tourbookingsytem.dto.response.TourOperatorResponse;
+import com.travelvn.tourbookingsytem.mapper.TourOperatorMapper;
 import com.travelvn.tourbookingsytem.model.TourOperator;
 import com.travelvn.tourbookingsytem.repository.TourOperatorRepository;
+import org.hibernate.validator.internal.util.stereotypes.Lazy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TourOperatorService {
+
     @Autowired
     private TourOperatorRepository tourOperatorRepository;
 
-    public TourOperator createTourOperator(TourOperator tourOperator) {
-        tourOperator.setId(null);
-        return tourOperatorRepository.save(tourOperator);
+    @Autowired
+    private TourOperatorMapper tourOperatorMapper;
+
+    @Autowired
+    private UserAccountFactoryService userAccountFactoryService;
+
+
+
+    public List<TourOperatorResponse> getAllTourOperators() {
+        return tourOperatorRepository.findAll().stream()
+                .map(tourOperatorMapper::toResponse)
+                .collect(Collectors.toList());
     }
 
-    public TourOperator findTourOperatorById(int id) {
+    public TourOperatorResponse findTourOperatorById(int id) {
         Optional<TourOperator> tourOperator = tourOperatorRepository.findById(id);
-        return tourOperator.orElse(null);
+        return tourOperator.map(tourOperatorMapper::toResponse).orElse(null);
     }
 
-    public TourOperator updateTourOperator(Integer id, TourOperator updatedTourOperator) {
-        TourOperator existing = tourOperatorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Tour Operator not found"));
-        existing.setFirstname(updatedTourOperator.getFirstname());
-        existing.setLastname(updatedTourOperator.getLastname());
-        existing.setDateOfBirth(updatedTourOperator.getDateOfBirth());
-        existing.setGender(updatedTourOperator.getGender());
-        existing.setAddress(updatedTourOperator.getAddress());
-        existing.setPhoneNumber(updatedTourOperator.getPhoneNumber());
-        existing.setCitizenId(updatedTourOperator.getCitizenId());
-        existing.setHometown(updatedTourOperator.getHometown());
-        existing.setSalary(updatedTourOperator.getSalary());
-        existing.setStartDate(updatedTourOperator.getStartDate());
-        existing.setEndDate(updatedTourOperator.getEndDate());
-        return tourOperatorRepository.save(existing);
+    public TourOperatorResponse createTourOperator(TourOperatorRequest tourOperatorRequest) {
+        TourOperator tourOperator = tourOperatorMapper.toEntity(tourOperatorRequest);
+        tourOperator.setId(null); // Đảm bảo ID tự sinh
+        TourOperator savedTourOperator = tourOperatorRepository.save(tourOperator);
+        userAccountFactoryService.createForTourOperator(savedTourOperator);
+        return tourOperatorMapper.toResponse(savedTourOperator);
+    }
+
+    public TourOperatorResponse updateTourOperator(Integer id, TourOperatorRequest tourOperatorRequest) {
+        Optional<TourOperator> tourOperatorOptional = tourOperatorRepository.findById(id);
+        if (tourOperatorOptional.isPresent()) {
+            TourOperator tourOperator = tourOperatorOptional.get();
+            tourOperatorMapper.updateEntityFromRequest(tourOperatorRequest, tourOperator);
+            TourOperator updatedTourOperator = tourOperatorRepository.save(tourOperator);
+            return tourOperatorMapper.toResponse(updatedTourOperator);
+        }
+        return null;
     }
 
     public void deleteTourOperator(Integer id) {
-        Optional<TourOperator> tourOperator = tourOperatorRepository.findById(id);
-        if (!tourOperator.isPresent()) {
+        if (!tourOperatorRepository.existsById(id)) {
             throw new RuntimeException("Tour Operator with ID " + id + " not found");
         }
         tourOperatorRepository.deleteById(id);
-    }
-
-    public List<TourOperator> getAllTourOperators() {
-        return tourOperatorRepository.findAll();
     }
 }

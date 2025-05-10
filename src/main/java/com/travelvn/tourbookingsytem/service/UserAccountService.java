@@ -78,38 +78,5 @@ public class UserAccountService {
      *
      * @return Thông tin tài khoản
      */
-    //Quang anh
-    public List<UserAccount> getAllUserAccounts() {
-        return userAccountRepository.findAll();
-    }
-
-    public UserAccount getUserAccountByUsername(String username) {
-        return userAccountRepository.findByUsername(username);
-    }
-
-    public UserAccount createUserAccount(UserAccount userAccount) {
-        // Mã hóa mật khẩu trước khi lưu
-        userAccount.setPassword(passwordEncoder.encode(userAccount.getPassword()));
-        return userAccountRepository.save(userAccount);
-    }
-
-    public UserAccount updateUserAccount(String username, UserAccount userAccountDetails) {
-        UserAccount userAccount = userAccountRepository.findById(username)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
-
-        userAccount.setEmail(userAccountDetails.getEmail());
-        userAccount.setStatus(userAccountDetails.getStatus());
-        if (userAccountDetails.getPassword() != null && !userAccountDetails.getPassword().isEmpty()) {
-            userAccount.setPassword(passwordEncoder.encode(userAccountDetails.getPassword()));
-        }
-
-        return userAccountRepository.save(userAccount);
-    }
-
-
-
-    public void deleteUserAccount(String username) {
-        userAccountRepository.deleteById(username);
-    }
 
 }

@@ -9,13 +9,7 @@ import lombok.*;
 @Builder
 @ToString
 public class FestivalRequest {
-
-    private Integer id;
-
     private String festivalName;
-
     private String description;
-
-    private Boolean displayStatus = false;
-
+    private Boolean displayStatus;
 }

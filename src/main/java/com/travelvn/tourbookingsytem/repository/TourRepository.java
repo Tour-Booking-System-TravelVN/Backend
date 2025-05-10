@@ -3,6 +3,7 @@ package com.travelvn.tourbookingsytem.repository;
 import com.travelvn.tourbookingsytem.model.Tour;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,4 +14,11 @@ public interface TourRepository extends JpaRepository<Tour, String> {
 
     @Query("SELECT t FROM Tour t WHERE t.tourName LIKE %?1% OR t.departurePlace LIKE %?1% OR t.placesToVisit LIKE %?1%")
     List<Tour> findByLocationOrTourNameContaining(String keyword);
+
+    @Query("SELECT t FROM Tour t WHERE LOWER(t.tourName) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(t.departurePlace) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(t.placesToVisit) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+    List<Tour> searchByNameOrPlace(@Param("keyword") String keyword);
+
+
 }

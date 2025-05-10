@@ -11,33 +11,22 @@ public class DobValidator implements ConstraintValidator<DobConstraint, LocalDat
 
     private int min;
 
-    /**
-     * Khởi tạo các thông số cho annotation
-     *
-     * @param constraintAnnotation
-     */
     @Override
     public void initialize(DobConstraint constraintAnnotation) {
-        ConstraintValidator.super.initialize(constraintAnnotation);
-
-        min = constraintAnnotation.min();
+        this.min = constraintAnnotation.min();
     }
 
-    /**
-     * Kiểm tra dob có hợp lệ
-     *
-     * @param value Giá trị được truyền vào
-     * @param constraintValidatorContext
-     * @return
-     */
     @Override
-    public boolean isValid(LocalDateTime value, ConstraintValidatorContext constraintValidatorContext) {
-
-        if(Objects.isNull(value))
+    public boolean isValid(LocalDateTime value, ConstraintValidatorContext context) {
+        if (Objects.isNull(value)) {
             return true;
+        }
 
-        long years = ChronoUnit.YEARS.between(value, LocalDateTime.now());
+        if (value.isAfter(LocalDateTime.now())) {
+            return false; // Không được lớn hơn hiện tại
+        }
 
+        long years = ChronoUnit.YEARS.between(value.toLocalDate(), LocalDateTime.now().toLocalDate());
         return years >= min;
     }
 }

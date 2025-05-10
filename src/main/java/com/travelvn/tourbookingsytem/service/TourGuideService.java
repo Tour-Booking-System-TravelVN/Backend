@@ -1,13 +1,18 @@
 package com.travelvn.tourbookingsytem.service;
 
+import com.travelvn.tourbookingsytem.dto.request.TourGuideRequest;
+import com.travelvn.tourbookingsytem.dto.response.TourGuideResponse;
+import com.travelvn.tourbookingsytem.mapper.TourGuideMapper;
 import com.travelvn.tourbookingsytem.model.TourGuide;
 import com.travelvn.tourbookingsytem.repository.TourGuideRepository;
+import org.hibernate.validator.internal.util.stereotypes.Lazy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TourGuideService {
@@ -15,135 +20,110 @@ public class TourGuideService {
     @Autowired
     private TourGuideRepository tourGuideRepository;
 
-    // Lấy danh sách tất cả tour guide
-    public List<TourGuide> getAllTourGuides() {
-        return tourGuideRepository.findAll();
+    @Autowired
+    private TourGuideMapper tourGuideMapper;
+
+    @Autowired
+    private UserAccountFactoryService userAccountFactoryService;
+
+    public List<TourGuideResponse> getAllTourGuides() {
+        return tourGuideRepository.findAll().stream()
+                .map(tourGuideMapper::toResponse)
+                .collect(Collectors.toList());
     }
 
-    // Lấy tour guide theo ID
-    public TourGuide getTourGuideById(Integer id) {
+    public TourGuideResponse getTourGuideById(Integer id) {
         if (id == null) {
             throw new IllegalArgumentException("Tour guide ID must not be null");
         }
         Optional<TourGuide> tourGuide = tourGuideRepository.findById(id);
-        return tourGuide.orElse(null);
+        return tourGuide.map(tourGuideMapper::toResponse).orElse(null);
     }
 
-    // Tìm kiếm tour guide theo firstname và lastname
-    public List<TourGuide> searchTourGuides(String firstname, String lastname) {
-        if (firstname == null && lastname == null) {
-            throw new IllegalArgumentException("At least one of firstname or lastname must not be null");
-        }
+    public List<TourGuideResponse> searchTourGuides(String firstname, String lastname) {
+        List<TourGuide> tourGuides;
 
         if (firstname != null && lastname != null) {
-            return tourGuideRepository.findByFirstnameAndLastname(firstname, lastname);
+            tourGuides = tourGuideRepository.findByFirstnameContainingIgnoreCaseAndLastnameContainingIgnoreCase(firstname, lastname);
         } else if (firstname != null) {
-            return tourGuideRepository.findByFirstname(firstname);
+            tourGuides = tourGuideRepository.findByFirstnameContainingIgnoreCase(firstname);
+        } else if (lastname != null) {
+            tourGuides = tourGuideRepository.findByLastnameContainingIgnoreCase(lastname);
         } else {
-            return tourGuideRepository.findByLastname(lastname);
+            tourGuides = tourGuideRepository.findAll();
         }
+
+        return tourGuides.stream()
+                .map(tourGuideMapper::toResponse)
+                .collect(Collectors.toList());
     }
 
-    // Thêm tour guide mới
-    public TourGuide createTourGuide(TourGuide tourGuide) {
-        // Kiểm tra các trường NOT NULL
-        if (tourGuide.getFirstname() == null) {
+
+    public TourGuideResponse createTourGuide(TourGuideRequest tourGuideRequest) {
+        if (tourGuideRequest.getFirstname() == null) {
             throw new IllegalArgumentException("Firstname must not be null");
         }
-        if (tourGuide.getLastname() == null) {
+        if (tourGuideRequest.getLastname() == null) {
             throw new IllegalArgumentException("Lastname must not be null");
         }
-        if (tourGuide.getDateOfBirth() == null) {
+        if (tourGuideRequest.getDateOfBirth() == null) {
             throw new IllegalArgumentException("Date of birth must not be null");
         }
-        if (tourGuide.getGender() == null) {
+        if (tourGuideRequest.getGender() == null) {
             throw new IllegalArgumentException("Gender must not be null");
         }
-        if (tourGuide.getAddress() == null) {
+        if (tourGuideRequest.getAddress() == null) {
             throw new IllegalArgumentException("Address must not be null");
         }
-        if (tourGuide.getPhoneNumber() == null) {
+        if (tourGuideRequest.getPhoneNumber() == null) {
             throw new IllegalArgumentException("Phone number must not be null");
         }
-        if (tourGuide.getCitizenId() == null) {
+        if (tourGuideRequest.getCitizenId() == null) {
             throw new IllegalArgumentException("Citizen ID must not be null");
         }
-        if (tourGuide.getHometown() == null) {
+        if (tourGuideRequest.getHometown() == null) {
             throw new IllegalArgumentException("Hometown must not be null");
         }
-        if (tourGuide.getSalary() == null) {
+        if (tourGuideRequest.getSalary() == null) {
             throw new IllegalArgumentException("Salary must not be null");
         }
-        if (tourGuide.getStartDate() == null) {
+        if (tourGuideRequest.getStartDate() == null) {
             throw new IllegalArgumentException("Start date must not be null");
         }
-        if (tourGuide.getCardId() == null) {
+        if (tourGuideRequest.getCardId() == null) {
             throw new IllegalArgumentException("Card ID must not be null");
         }
-        if (tourGuide.getLanguage() == null) {
+        if (tourGuideRequest.getLanguage() == null) {
             throw new IllegalArgumentException("Language must not be null");
         }
 
-        // Đảm bảo ID là null để tự động sinh
-        tourGuide.setId(null);
-
-        return tourGuideRepository.save(tourGuide);
+        TourGuide tourGuide = tourGuideMapper.toEntity(tourGuideRequest);
+        tourGuide.setId(null); // Đảm bảo ID tự sinh
+        TourGuide savedTourGuide = tourGuideRepository.save(tourGuide);
+        userAccountFactoryService.createForTourGuide(savedTourGuide);
+        return tourGuideMapper.toResponse(savedTourGuide);
     }
 
-    // Cập nhật thông tin tour guide
-    public TourGuide updateTourGuide(Integer id, TourGuide tourGuideDetails) {
+    public TourGuideResponse updateTourGuide(Integer id, TourGuideRequest tourGuideRequest) {
         if (id == null) {
             throw new IllegalArgumentException("Tour guide ID must not be null");
         }
         Optional<TourGuide> tourGuideOptional = tourGuideRepository.findById(id);
         if (tourGuideOptional.isPresent()) {
             TourGuide tourGuide = tourGuideOptional.get();
-            if (tourGuideDetails.getFirstname() != null) {
-                tourGuide.setFirstname(tourGuideDetails.getFirstname());
+            tourGuideMapper.updateEntityFromRequest(tourGuideRequest, tourGuide);
+
+            // Kiểm tra salary không âm
+            if (tourGuide.getSalary() != null && tourGuide.getSalary().compareTo(BigDecimal.ZERO) < 0) {
+                throw new IllegalArgumentException("Salary must not be negative");
             }
-            if (tourGuideDetails.getLastname() != null) {
-                tourGuide.setLastname(tourGuideDetails.getLastname());
-            }
-            if (tourGuideDetails.getDateOfBirth() != null) {
-                tourGuide.setDateOfBirth(tourGuideDetails.getDateOfBirth());
-            }
-            if (tourGuideDetails.getGender() != null) {
-                tourGuide.setGender(tourGuideDetails.getGender());
-            }
-            if (tourGuideDetails.getAddress() != null) {
-                tourGuide.setAddress(tourGuideDetails.getAddress());
-            }
-            if (tourGuideDetails.getPhoneNumber() != null) {
-                tourGuide.setPhoneNumber(tourGuideDetails.getPhoneNumber());
-            }
-            if (tourGuideDetails.getCitizenId() != null) {
-                tourGuide.setCitizenId(tourGuideDetails.getCitizenId());
-            }
-            if (tourGuideDetails.getHometown() != null) {
-                tourGuide.setHometown(tourGuideDetails.getHometown());
-            }
-            if (tourGuideDetails.getSalary() != null) {
-                if (tourGuideDetails.getSalary().compareTo(BigDecimal.ZERO) < 0) {
-                    throw new IllegalArgumentException("Salary must not be -");
-                }
-                tourGuide.setSalary(tourGuideDetails.getSalary());
-            }
-            if (tourGuideDetails.getStartDate() != null) {
-                tourGuide.setStartDate(tourGuideDetails.getStartDate());
-            }
-            tourGuide.setEndDate(tourGuideDetails.getEndDate()); // endDate có thể null
-            if (tourGuideDetails.getCardId() != null) {
-                tourGuide.setCardId(tourGuideDetails.getCardId());
-            }
-            if (tourGuideDetails.getLanguage() != null) {
-                tourGuide.setLanguage(tourGuideDetails.getLanguage());
-            }
-            return tourGuideRepository.save(tourGuide);
+
+            TourGuide updatedTourGuide = tourGuideRepository.save(tourGuide);
+            return tourGuideMapper.toResponse(updatedTourGuide);
         }
         return null;
     }
 
-    // Xóa tour guide
     public void deleteTourGuide(Integer id) {
         if (id == null) {
             throw new IllegalArgumentException("Tour guide ID must not be null");

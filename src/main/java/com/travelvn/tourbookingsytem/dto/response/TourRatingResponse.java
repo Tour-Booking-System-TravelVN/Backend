@@ -1,6 +1,5 @@
 package com.travelvn.tourbookingsytem.dto.response;
 
-import com.travelvn.tourbookingsytem.model.Customer;
 import lombok.*;
 
 @Getter
@@ -9,21 +8,11 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @ToString
-
 public class TourRatingResponse {
-
     private Integer id;
-
-    private TourUnitResponse tourUnit;
-
-    private AdministratorResponse administrator;
-
-    private Customer c;
-
+    private String tourUnitId;
+    private Integer customerId;
     private Byte ratingValue;
-
     private String comment;
-
     private String status;
-
 }

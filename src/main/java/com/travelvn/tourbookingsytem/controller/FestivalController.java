@@ -1,7 +1,7 @@
 package com.travelvn.tourbookingsytem.controller;
 
-
-import com.travelvn.tourbookingsytem.model.Festival;
+import com.travelvn.tourbookingsytem.dto.request.FestivalRequest;
+import com.travelvn.tourbookingsytem.dto.response.FestivalResponse;
 import com.travelvn.tourbookingsytem.service.FestivalService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-// da test
+
 @RestController
 @RequestMapping("/api/festivals")
 public class FestivalController {
@@ -18,31 +18,25 @@ public class FestivalController {
     private FestivalService festivalService;
 
     @GetMapping
-    public ResponseEntity<List<Festival>> getAllFestivals() {
+    public ResponseEntity<List<FestivalResponse>> getAllFestivals() {
         return ResponseEntity.ok(festivalService.getAllFestivals());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Festival> getFestivalById(@PathVariable Integer id) {
-        Festival festival = festivalService.getFestivalById(id);
-        if (festival != null) {
-            return ResponseEntity.ok(festival);
-        }
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<FestivalResponse> getFestivalById(@PathVariable Integer id) {
+        FestivalResponse festival = festivalService.getFestivalById(id);
+        return festival != null ? ResponseEntity.ok(festival) : ResponseEntity.notFound().build();
     }
 
     @PostMapping
-    public ResponseEntity<Festival> createFestival(@Valid @RequestBody Festival festival) {
-        return ResponseEntity.ok(festivalService.createFestival(festival));
+    public ResponseEntity<FestivalResponse> createFestival(@Valid @RequestBody FestivalRequest festivalRequest) {
+        return ResponseEntity.ok(festivalService.createFestival(festivalRequest));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Festival> updateFestival(@PathVariable Integer id, @Valid @RequestBody Festival festivalDetails) {
-        Festival updatedFestival = festivalService.updateFestival(id, festivalDetails);
-        if (updatedFestival != null) {
-            return ResponseEntity.ok(updatedFestival);
-        }
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<FestivalResponse> updateFestival(@PathVariable Integer id, @Valid @RequestBody FestivalRequest festivalRequest) {
+        FestivalResponse updatedFestival = festivalService.updateFestival(id, festivalRequest);
+        return updatedFestival != null ? ResponseEntity.ok(updatedFestival) : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")

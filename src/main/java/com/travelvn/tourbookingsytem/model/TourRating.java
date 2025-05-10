@@ -14,53 +14,44 @@ import lombok.*;
 @Table(name = "tour_rating")
 public class TourRating {
     @Id
-    @Column(name = "tour_rating_id", nullable = false)
+    @Column(name = "tour_rating_id")
     private Integer id;
 
     @ToString.Exclude
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "tour_unit_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tour_unit_id")
     private TourUnit tourUnit;
 
     @ToString.Exclude
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "administrator_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "administrator_id")
     private Administrator administrator;
 
     @ToString.Exclude
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "c_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "c_id")
     private Customer c;
 
-    @Column(name = "rating_value", nullable = false)
+    @Column(name = "rating_value")
     private Byte ratingValue;
 
     @Lob
-    @Column(name = "comment", nullable = false)
+    @Column(name = "comment")
     private String comment;
 
-    @Column(name = "status", nullable = false)
+    @Column(name = "status")
     private String status;
 
-    // Getter tùy chỉnh để chỉ lấy tourUnitId
     @JsonProperty("tourUnitId")
     public String getTourUnitId() {
         return tourUnit != null ? tourUnit.getTourUnitId() : null;
     }
 
-//    // Getter tùy chỉnh để chỉ lấy administratorId
-//    @JsonProperty("administratorId")
-//    public Integer getAdministratorId() {
-//        return administrator != null ? administrator.getId() : null;
-//    }
-
-    // Getter tùy chỉnh để chỉ lấy customerId
     @JsonProperty("customerId")
     public Integer getCustomerId() {
         return c != null ? c.getId() : null;
     }
 
-    // Bỏ serialize các trường quan hệ gốc
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     public TourUnit getTourUnit() {
         return tourUnit;

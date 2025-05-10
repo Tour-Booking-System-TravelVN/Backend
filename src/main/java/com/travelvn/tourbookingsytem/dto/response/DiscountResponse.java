@@ -12,11 +12,7 @@ import java.math.BigDecimal;
 @ToString
 public class DiscountResponse {
     private Integer id;
-
     private String discountName;
-
     private BigDecimal discountValue;
-
     private String discountUnit;
-
 }

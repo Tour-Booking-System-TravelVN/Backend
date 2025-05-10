@@ -3,7 +3,6 @@ package com.travelvn.tourbookingsytem.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -19,22 +18,21 @@ import java.util.Set;
 public class Festival {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "festival_id", nullable = false)
+    @Column(name = "festival_id")
     private Integer id;
 
-    @Column(name = "festival_name", nullable = false)
+    @Column(name = "festival_name")
     private String festivalName;
 
     @Lob
     @Column(name = "description")
     private String description;
 
-    @ColumnDefault("b'0'")
-    @Column(name = "display_status", nullable = false)
-    private Boolean displayStatus = false;
+    @Column(name = "display_status")
+    private Boolean displayStatus;
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "festival", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
+    @OneToMany(mappedBy = "festival", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<TourUnit> tourUnitSet = new HashSet<>();
 }

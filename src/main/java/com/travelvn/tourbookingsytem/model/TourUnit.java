@@ -3,7 +3,6 @@ package com.travelvn.tourbookingsytem.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -22,15 +21,13 @@ import java.util.Set;
 @Table(name = "tour_unit")
 public class TourUnit {
     @Id
-    @Column(name = "tour_unit_id", nullable = false, length = 24)
-    @NotNull(message = "Tour Unit ID must not be null")
+    @Column(name = "tour_unit_id", length = 24)
     private String tourUnitId;
 
     @ToString.Exclude
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "festival_id", nullable = false)
-    @NotNull(message = "Festival must not be null")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "festival_id")
     private Festival festival;
 
     @JsonProperty("festivalId")
@@ -41,20 +38,19 @@ public class TourUnit {
 
     @ToString.Exclude
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "tour_id", nullable = false)
-    @NotNull(message = "Tour must not be null")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tour_id")
     private Tour tour;
 
     @JsonProperty("tourId")
     @Transient
     public String getTourId() {
-        return tour != null ? tour.getTourId() : null; // Giả sử Tour có getTourId()
+        return tour != null ? tour.getTourId() : null;
     }
 
     @ToString.Exclude
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "discount_id")
     private Discount discount;
 
@@ -66,9 +62,8 @@ public class TourUnit {
 
     @ToString.Exclude
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "tour_operator_id", nullable = false)
-    @NotNull(message = "Tour Operator must not be null")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tour_operator_id")
     private TourOperator tourOperator;
 
     @JsonProperty("tourOperatorId")
@@ -79,7 +74,7 @@ public class TourUnit {
 
     @ToString.Exclude
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "last_updated_operator")
     private TourOperator lastUpdatedOperator;
 
@@ -89,63 +84,49 @@ public class TourUnit {
         return lastUpdatedOperator != null ? lastUpdatedOperator.getId() : null;
     }
 
-    @Column(name = "departure_date", nullable = false)
-    @NotNull(message = "Departure date must not be null")
+    @Column(name = "departure_date")
     private LocalDate departureDate;
 
-    @Column(name = "return_date", nullable = false)
-    @NotNull(message = "Return date must not be null")
+    @Column(name = "return_date")
     private LocalDate returnDate;
 
-    @Column(name = "adult_tour_price", nullable = false, precision = 19, scale = 3)
-    @NotNull(message = "Adult tour price must not be null")
+    @Column(name = "adult_tour_price", precision = 19, scale = 3)
     private BigDecimal adultTourPrice;
 
-    @Column(name = "child_tour_price", nullable = false, precision = 19, scale = 3)
-    @NotNull(message = "Child tour price must not be null")
+    @Column(name = "child_tour_price", precision = 19, scale = 3)
     private BigDecimal childTourPrice;
 
-    @Column(name = "toddler_tour_price", nullable = false, precision = 19, scale = 3)
-    @NotNull(message = "Toddler tour price must not be null")
+    @Column(name = "toddler_tour_price", precision = 19, scale = 3)
     private BigDecimal toddlerTourPrice;
 
-    @Column(name = "baby_tour_price", nullable = false, precision = 19, scale = 3)
-    @NotNull(message = "Baby tour price must not be null")
+    @Column(name = "baby_tour_price", precision = 19, scale = 3)
     private BigDecimal babyTourPrice;
 
-    @Column(name = "adult_tour_cost", nullable = false, precision = 19, scale = 3)
-    @NotNull(message = "Adult tour cost must not be null")
+    @Column(name = "adult_tour_cost", precision = 19, scale = 3)
     private BigDecimal adultTourCost;
 
-    @Column(name = "child_tour_cost", nullable = false, precision = 19, scale = 3)
-    @NotNull(message = "Child tour cost must not be null")
+    @Column(name = "child_tour_cost", precision = 19, scale = 3)
     private BigDecimal childTourCost;
 
-    @Column(name = "toddler_tour_cost", nullable = false, precision = 19, scale = 3)
-    @NotNull(message = "Toddler tour cost must not be null")
+    @Column(name = "toddler_tour_cost", precision = 19, scale = 3)
     private BigDecimal toddlerTourCost;
 
-    @Column(name = "baby_tour_cost", nullable = false, precision = 19, scale = 3)
-    @NotNull(message = "Baby tour cost must not be null")
+    @Column(name = "baby_tour_cost", precision = 19, scale = 3)
     private BigDecimal babyTourCost;
 
-    @Column(name = "private_room_price", nullable = false, precision = 19, scale = 3)
-    @NotNull(message = "Private room price must not be null")
+    @Column(name = "private_room_price", precision = 19, scale = 3)
     private BigDecimal privateRoomPrice;
 
-    @Column(name = "created_time", nullable = false)
-    @NotNull(message = "Created time must not be null")
+    @Column(name = "created_time")
     private Instant createdTime;
 
     @Column(name = "last_updated_time")
     private Instant lastUpdatedTime;
 
-    @Column(name = "maximum_capacity", nullable = false)
-    @NotNull(message = "Maximum capacity must not be null")
+    @Column(name = "maximum_capacity")
     private Short maximumCapacity;
 
-    @Column(name = "available_capacity", nullable = false)
-    @NotNull(message = "Available capacity must not be null")
+    @Column(name = "available_capacity")
     private Short availableCapacity;
 
     @Column(name = "total_additional_cost", precision = 19, scale = 3)
@@ -161,7 +142,8 @@ public class TourUnit {
     @OneToMany(mappedBy = "tourUnit", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Booking> bookingSet = new HashSet<>();
 
-    @OneToMany(mappedBy = "tourUnit", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
     @JsonIgnore
+    @OneToMany(mappedBy = "tourUnit", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<TourRating> ratingSet = new HashSet<>();
 }

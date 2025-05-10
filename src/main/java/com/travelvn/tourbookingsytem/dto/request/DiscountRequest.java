@@ -11,12 +11,7 @@ import java.math.BigDecimal;
 @Builder
 @ToString
 public class DiscountRequest {
-    private Integer id;
-
     private String discountName;
-
     private BigDecimal discountValue;
-
     private String discountUnit;
-
 }

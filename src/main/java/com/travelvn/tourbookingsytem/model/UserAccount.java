@@ -23,22 +23,18 @@ public class UserAccount {
 
     @ToString.Exclude
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JsonIgnore
     @JoinColumn(name = "c_id")
     private Customer c;
 
     @OneToOne(fetch = FetchType.EAGER)
-    @JsonIgnore
     @JoinColumn(name = "administrator_id")
     private Administrator administrator;
 
     @OneToOne(fetch = FetchType.EAGER)
-    @JsonIgnore
     @JoinColumn(name = "tour_guide_id")
     private TourGuide tourGuide;
 
     @OneToOne(fetch = FetchType.EAGER)
-    @JsonIgnore
     @JoinColumn(name = "tour_operator_id")
     private TourOperator tourOperator;
 

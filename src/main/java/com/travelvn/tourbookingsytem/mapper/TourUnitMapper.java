@@ -1,26 +1,37 @@
 package com.travelvn.tourbookingsytem.mapper;
 
-import com.travelvn.tourbookingsytem.dto.request.CustomerRequest;
 import com.travelvn.tourbookingsytem.dto.request.TourUnitRequest;
 import com.travelvn.tourbookingsytem.dto.response.TourUnitResponse;
-import com.travelvn.tourbookingsytem.model.Customer;
-import com.travelvn.tourbookingsytem.model.TourOperator;
 import com.travelvn.tourbookingsytem.model.TourUnit;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.factory.Mappers;
 
-//@Component
 @Mapper(componentModel = "spring")
 public interface TourUnitMapper {
-    TourUnit toTourUnit(TourUnitRequest tourUnitRequest);
-//    TourUnitRequest toTourUnitRequest(TourUnit tourUnit);
-default TourOperator map(Integer id) {
-    if (id == null) {
-        return null;
-    }
-    TourOperator tourOperator = new TourOperator();
-    tourOperator.setId(id); // Gán ID cho đối tượng TourOperator
-    return tourOperator;
-}
-//    TourUnit toTourUnit(TourUnitResponse tourUnitResponse);
-    TourUnitResponse toTourUnitResponse(TourUnit tourUnit);
+    TourUnitMapper INSTANCE = Mappers.getMapper(TourUnitMapper.class);
+
+    @Mapping(target = "festival", ignore = true)
+    @Mapping(target = "tour", ignore = true)
+    @Mapping(target = "discount", ignore = true)
+    @Mapping(target = "tourOperator", ignore = true)
+    @Mapping(target = "lastUpdatedOperator", ignore = true)
+    @Mapping(target = "guideSet", ignore = true)
+    @Mapping(target = "bookingSet", ignore = true)
+    @Mapping(target = "ratingSet", ignore = true)
+    TourUnit toEntity(TourUnitRequest tourUnitRequest);
+
+    TourUnitResponse toResponse(TourUnit tourUnit);
+
+    @Mapping(target = "tourUnitId", ignore = true)
+    @Mapping(target = "festival", ignore = true)
+    @Mapping(target = "tour", ignore = true)
+    @Mapping(target = "discount", ignore = true)
+    @Mapping(target = "tourOperator", ignore = true)
+    @Mapping(target = "lastUpdatedOperator", ignore = true)
+    @Mapping(target = "guideSet", ignore = true)
+    @Mapping(target = "bookingSet", ignore = true)
+    @Mapping(target = "ratingSet", ignore = true)
+    void updateEntityFromRequest(TourUnitRequest tourUnitRequest, @MappingTarget TourUnit tourUnit);
 }

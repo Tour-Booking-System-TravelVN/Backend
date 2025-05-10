@@ -12,51 +12,27 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 @ToString
-
 public class TourUnitResponse {
-
     private String tourUnitId;
-
-    private FestivalResponse festival;
-
-    private TourResponse tour;
-
-    private DiscountResponse discount;
-
-    private TourOperatorResponse tourOperator;
-
-    private TourOperatorResponse lastUpdatedOperator;
-
+    private Integer festivalId;
+    private String tourId;
+    private Integer discountId;
+    private Integer tourOperatorId;
+    private Integer lastUpdatedOperatorId;
     private LocalDate departureDate;
-
     private LocalDate returnDate;
-
     private BigDecimal adultTourPrice;
-
     private BigDecimal childTourPrice;
-
     private BigDecimal toddlerTourPrice;
-
     private BigDecimal babyTourPrice;
-
     private BigDecimal adultTourCost;
-
     private BigDecimal childTourCost;
-
     private BigDecimal toddlerTourCost;
-
     private BigDecimal babyTourCost;
-
     private BigDecimal privateRoomPrice;
-
     private Instant createdTime;
-
     private Instant lastUpdatedTime;
-
     private Short maximumCapacity;
-
     private Short availableCapacity;
-
     private BigDecimal totalAdditionalCost;
-
 }

@@ -1,41 +1,62 @@
 package com.travelvn.tourbookingsytem.controller;
 
-import com.travelvn.tourbookingsytem.model.TourOperator;
+import com.travelvn.tourbookingsytem.dto.request.TourOperatorRequest;
+import com.travelvn.tourbookingsytem.dto.response.TourOperatorResponse;
 import com.travelvn.tourbookingsytem.service.TourOperatorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
-//da TEST
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/tour-operators")
 public class TourOperatorController {
+
     @Autowired
     private TourOperatorService tourOperatorService;
 
     @GetMapping
-    public ResponseEntity<List<TourOperator>> getAllTourOperators() {
+    public ResponseEntity<List<TourOperatorResponse>> getAllTourOperators() {
         return ResponseEntity.ok(tourOperatorService.getAllTourOperators());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TourOperator> getTourOperatorById(@PathVariable int id) {
-        return ResponseEntity.ok(tourOperatorService.findTourOperatorById(id));
+    public ResponseEntity<?> getTourOperatorById(@PathVariable int id) {
+        TourOperatorResponse tourOperator = tourOperatorService.findTourOperatorById(id);
+        if (tourOperator == null) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("code", 4040);
+            errorResponse.put("message", "Tour operator with ID " + id + " not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        }
+        return ResponseEntity.ok(tourOperator);
     }
+
     @PostMapping
-    public ResponseEntity<TourOperator> createTourOperator(@RequestBody TourOperator tourOperator) {
-        return ResponseEntity.ok(tourOperatorService.createTourOperator(tourOperator));
+    public ResponseEntity<TourOperatorResponse> createTourOperator(@Valid @RequestBody TourOperatorRequest tourOperatorRequest) {
+        return ResponseEntity.ok(tourOperatorService.createTourOperator(tourOperatorRequest));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TourOperator> updateTourOperator(@PathVariable Integer id, @RequestBody TourOperator tourOperator) {
-        return ResponseEntity.ok(tourOperatorService.updateTourOperator(id, tourOperator));
+    public ResponseEntity<?> updateTourOperator(@PathVariable Integer id, @Valid @RequestBody TourOperatorRequest tourOperatorRequest) {
+        TourOperatorResponse updatedTourOperator = tourOperatorService.updateTourOperator(id, tourOperatorRequest);
+        if (updatedTourOperator == null) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("code", 4040);
+            errorResponse.put("message", "Tour operator with ID " + id + " not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        }
+        return ResponseEntity.ok(updatedTourOperator);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTourOperator(@PathVariable Integer id) {
         tourOperatorService.deleteTourOperator(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }

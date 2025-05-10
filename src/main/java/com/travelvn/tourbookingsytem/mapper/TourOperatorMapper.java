@@ -1,18 +1,21 @@
 package com.travelvn.tourbookingsytem.mapper;
 
-import com.travelvn.tourbookingsytem.dto.request.CustomerRequest;
 import com.travelvn.tourbookingsytem.dto.request.TourOperatorRequest;
 import com.travelvn.tourbookingsytem.dto.response.TourOperatorResponse;
-import com.travelvn.tourbookingsytem.model.Customer;
 import com.travelvn.tourbookingsytem.model.TourOperator;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.factory.Mappers;
 
-//@Component
 @Mapper(componentModel = "spring")
 public interface TourOperatorMapper {
-    TourOperator toTourOperator(TourOperatorRequest tourOperatorRequest);
-//    TourOperatorRequest toTourOperatorRequest(TourOperator tourOperator);
+    TourOperatorMapper INSTANCE = Mappers.getMapper(TourOperatorMapper.class);
 
-//    TourOperator toTourOperator(TourOperatorResponse tourOperatorResponse);
-    TourOperatorResponse toTourOperatorResponse(TourOperator tourOperator);
+    TourOperator toEntity(TourOperatorRequest tourOperatorRequest);
+
+    TourOperatorResponse toResponse(TourOperator tourOperator);
+
+    @Mapping(target = "id", ignore = true)
+    void updateEntityFromRequest(TourOperatorRequest tourOperatorRequest, @MappingTarget TourOperator tourOperator);
 }

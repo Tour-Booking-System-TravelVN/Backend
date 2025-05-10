@@ -1,12 +1,9 @@
 package com.travelvn.tourbookingsytem.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import java.util.List;
+
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -19,22 +16,22 @@ import java.util.Set;
 @ToString
 @Entity
 @Table(name = "customer")
-public class    Customer {
+public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "c_id", nullable = false)
+    @Column(name = "c_id")
     private Integer id;
 
-    @Column(name = "firstname", nullable = false, length = 40)
+    @Column(name = "firstname", length = 40)
     private String firstname;
 
-    @Column(name = "lastname", nullable = false, length = 10)
+    @Column(name = "lastname", length = 10)
     private String lastname;
 
-    @Column(name = "date_of_birth", nullable = false)
+    @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
-    @Column(name = "gender", nullable = false)
+    @Column(name = "gender")
     private boolean gender;
 
     @Column(name = "nationality")
@@ -63,17 +60,17 @@ public class    Customer {
 
     @ToString.Exclude
     @JsonIgnore
-    @OneToMany(mappedBy = "c",cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "c", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Booking> bookingSet = new HashSet<>();
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "c",cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
+    @OneToMany(mappedBy = "c", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<CompanionCustomer> companionCustomerSet = new HashSet<>();
 
     @ToString.Exclude
     @JsonIgnore
-    @OneToMany(mappedBy = "c",cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "c", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<TourRating> tourRatingSet = new HashSet<>();
 
     public boolean getGender() {

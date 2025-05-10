@@ -1,18 +1,21 @@
 package com.travelvn.tourbookingsytem.mapper;
 
-import com.travelvn.tourbookingsytem.dto.request.CustomerRequest;
 import com.travelvn.tourbookingsytem.dto.request.DiscountRequest;
 import com.travelvn.tourbookingsytem.dto.response.DiscountResponse;
-import com.travelvn.tourbookingsytem.model.Customer;
 import com.travelvn.tourbookingsytem.model.Discount;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.factory.Mappers;
 
-//@Component
 @Mapper(componentModel = "spring")
 public interface DiscountMapper {
-    Discount toDiscount(DiscountRequest discountRequest);
-//    Discount toDiscount(DiscountResponse discountResponse);
+    DiscountMapper INSTANCE = Mappers.getMapper(DiscountMapper.class);
 
-    DiscountResponse toDiscountResponse(Discount discount);
-//    DiscountRequest toDiscountRequest(Discount discount);
+    Discount toEntity(DiscountRequest discountRequest);
+
+    DiscountResponse toResponse(Discount discount);
+
+    @Mapping(target = "id", ignore = true)
+    void updateEntityFromRequest(DiscountRequest discountRequest, @MappingTarget Discount discount);
 }

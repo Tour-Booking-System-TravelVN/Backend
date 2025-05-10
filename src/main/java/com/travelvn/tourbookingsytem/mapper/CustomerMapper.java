@@ -3,30 +3,21 @@ package com.travelvn.tourbookingsytem.mapper;
 import com.travelvn.tourbookingsytem.dto.request.CustomerRequest;
 import com.travelvn.tourbookingsytem.dto.response.CustomerResponse;
 import com.travelvn.tourbookingsytem.model.Customer;
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.factory.Mappers;
 
-@Named("CustomerMapper")
-@Mapper(componentModel = "spring"/*, unmappedTargetPolicy = ReportingPolicy.IGNORE*/)
+@Mapper(componentModel = "spring")
 public interface CustomerMapper {
-    Customer toCustomer(CustomerRequest customerRequest);
-    // Phương thức ánh xạ từ Boolean sang byte
-    default byte map(Boolean value) {
-        return (value != null && value) ? (byte) 1 : (byte) 0;
-    }
-//    Customer toCustomer(CustomerResponse customerResponse);
+    CustomerMapper INSTANCE = Mappers.getMapper(CustomerMapper.class);
 
-//    CustomerRequest toCustomerRequest(Customer customer);
+    @Mapping(source = "dateOfBirth", target = "dateOfBirth")
+    Customer toEntity(CustomerRequest customerRequest);
 
-//    @Named("toCustomerResponse")
-//    @Mappings({
-//            @Mapping(target = "userAccount", qualifiedByName = {"UserAccountMapper", "toUserAccountResponseWithoutCustomer"})
-//    })
+    CustomerResponse toResponse(Customer customer);
 
-    CustomerResponse toCustomerResponse(Customer customer);
-
-//    @Named("toCustomerResponseWithoutUserAccount")
-//    @Mappings({
-//            @Mapping(target = "userAccount", expression = "java(null)")
-//    })
-//    CustomerResponse toCustomerResponseWithoutUserAccount(Customer customer);
+    @Mapping(target = "id", ignore = true)
+    @Mapping(source = "dateOfBirth", target = "dateOfBirth")
+    void updateEntityFromRequest(CustomerRequest customerRequest, @MappingTarget Customer customer);
 }
