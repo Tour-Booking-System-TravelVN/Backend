@@ -1,10 +1,8 @@
 package com.travelvn.tourbookingsytem.controller;
 
 import com.travelvn.tourbookingsytem.dto.request.UserAccountRequest;
-import com.travelvn.tourbookingsytem.dto.response.ApiResponse;
+import com.travelvn.tourbookingsytem.dto.response.ApiAdResponse;
 import com.travelvn.tourbookingsytem.dto.response.AuthenticationResponse;
-import com.travelvn.tourbookingsytem.dto.response.UserAccountResponse;
-import com.travelvn.tourbookingsytem.model.UserAccount;
 import com.travelvn.tourbookingsytem.service.AuthenticationService;
 import com.travelvn.tourbookingsytem.service.UserAccountService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,12 +10,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -52,7 +47,7 @@ public class UserAccountController {
      * @return token
      */
     @PostMapping("/register")
-    public ApiResponse<AuthenticationResponse> register(@RequestBody @Valid UserAccountRequest userAccountRequest, HttpServletResponse response) {
+    public ApiAdResponse<AuthenticationResponse> register(@RequestBody @Valid UserAccountRequest userAccountRequest, HttpServletResponse response) {
 //        log.info("UserAccountRequest : {}", userAccountRequest);
 //        log.info("Before");
         userAccountService.addUserAccount(userAccountRequest);
@@ -75,7 +70,7 @@ public class UserAccountController {
         // Set Cookie vào Response Header
         response.addHeader("Set-Cookie", cookie.toString());
 
-        return ApiResponse.<AuthenticationResponse>builder()
+        return ApiAdResponse.<AuthenticationResponse>builder()
                 .result(authenticationService.authenticate(userAccountRequest))
                 .build();
     }

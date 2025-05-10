@@ -1,6 +1,6 @@
 package com.travelvn.tourbookingsytem.exception;
 
-import com.travelvn.tourbookingsytem.dto.response.ApiResponse;
+import com.travelvn.tourbookingsytem.dto.response.ApiAdResponse;
 import jakarta.validation.ConstraintViolation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -27,15 +27,15 @@ public class GlobalException {
      * @return API chứa thông tin lỗi
      */
     @ExceptionHandler(value = Exception.class)
-    ResponseEntity<ApiResponse> handlingRunTimeException(RuntimeException e) {
-        ApiResponse apiResponse = new ApiResponse();
+    ResponseEntity<ApiAdResponse> handlingRunTimeException(RuntimeException e) {
+        ApiAdResponse apiAdResponse = new ApiAdResponse();
 
-        apiResponse.setCode(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode());
-        apiResponse.setMessage(ErrorCode.UNCATEGORIZED_EXCEPTION.getMessage());
+        apiAdResponse.setCode(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode());
+        apiAdResponse.setMessage(ErrorCode.UNCATEGORIZED_EXCEPTION.getMessage());
 
         return ResponseEntity
                 .status(ErrorCode.UNCATEGORIZED_EXCEPTION.getStatusCode())
-                .body(apiResponse);
+                .body(apiAdResponse);
     }
 
     /**
@@ -45,7 +45,7 @@ public class GlobalException {
      * @return API chứa thông tin lỗi
      */
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
-    ResponseEntity<ApiResponse> handlingMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+    ResponseEntity<ApiAdResponse> handlingMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         String enumKey = e.getFieldError().getDefaultMessage();
         ErrorCode errorCode = ErrorCode.INVALID_KEY;
 
@@ -68,16 +68,16 @@ public class GlobalException {
 
         }
 
-        ApiResponse apiResponse = new ApiResponse();
+        ApiAdResponse apiAdResponse = new ApiAdResponse();
 
-        apiResponse.setCode(errorCode.getCode());
-        apiResponse.setMessage(Objects.nonNull(attributes) ?
+        apiAdResponse.setCode(errorCode.getCode());
+        apiAdResponse.setMessage(Objects.nonNull(attributes) ?
                 mapAttribute(errorCode.getMessage(), attributes)
                 : errorCode.getMessage());
 
         return ResponseEntity
                 .status(errorCode.getStatusCode())
-                .body(apiResponse);
+                .body(apiAdResponse);
     }
 
     /**
@@ -100,16 +100,16 @@ public class GlobalException {
      * @return API chứa thông tin lỗi
      */
     @ExceptionHandler(value = AppException.class)
-    ResponseEntity<ApiResponse> handlingAppException(AppException e) {
+    ResponseEntity<ApiAdResponse> handlingAppException(AppException e) {
         ErrorCode errorCode = e.getErrorCode();
-        ApiResponse apiResponse = new ApiResponse();
+        ApiAdResponse apiAdResponse = new ApiAdResponse();
 
-        apiResponse.setCode(errorCode.getCode());
-        apiResponse.setMessage(errorCode.getMessage());
+        apiAdResponse.setCode(errorCode.getCode());
+        apiAdResponse.setMessage(errorCode.getMessage());
 
         return ResponseEntity
                 .status(errorCode.getStatusCode())
-                .body(apiResponse);
+                .body(apiAdResponse);
     }
 
     /**
@@ -119,11 +119,11 @@ public class GlobalException {
      * @return API chứa thông tin lỗi
      */
     @ExceptionHandler(value = AccessDeniedException.class)
-    ResponseEntity<ApiResponse> handlingAccessDeniedException(AccessDeniedException e) {
+    ResponseEntity<ApiAdResponse> handlingAccessDeniedException(AccessDeniedException e) {
         ErrorCode errorCode = ErrorCode.UNAUTHORIZED;
 
         return ResponseEntity.status(errorCode.getStatusCode()).body(
-                ApiResponse.builder()
+                ApiAdResponse.builder()
                         .code(errorCode.getCode())
                         .message(errorCode.getMessage())
                         .build()
@@ -131,11 +131,11 @@ public class GlobalException {
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ApiResponse<Object>> handlingDataIntegrityViolationException(DataIntegrityViolationException ex) {
-        ApiResponse<Object> apiResponse = ApiResponse.builder()
+    public ResponseEntity<ApiAdResponse<Object>> handlingDataIntegrityViolationException(DataIntegrityViolationException ex) {
+        ApiAdResponse<Object> apiAdResponse = ApiAdResponse.builder()
                 .code(HttpStatus.BAD_REQUEST.value())
                 .message("Data integrity violation: " + ex.getRootCause().getMessage())
                 .build();
-        return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(apiAdResponse, HttpStatus.BAD_REQUEST);
     }
 }

@@ -1,17 +1,15 @@
 package com.travelvn.tourbookingsytem.controller;
 
-import com.mysql.cj.log.Log;
 import com.nimbusds.jose.JOSEException;
 import com.travelvn.tourbookingsytem.config.JwtAuthenticationFilter;
-import com.travelvn.tourbookingsytem.dto.request.IntrospectRequest;
-import com.travelvn.tourbookingsytem.dto.request.LogoutRequest;
-import com.travelvn.tourbookingsytem.dto.request.RefreshTokenRequest;
+import com.travelvn.tourbookingsytem.dto.request.IntrospectAdRequest;
+import com.travelvn.tourbookingsytem.dto.request.LogoutAdRequest;
+import com.travelvn.tourbookingsytem.dto.request.RefreshTokenAdRequest;
 import com.travelvn.tourbookingsytem.dto.request.UserAccountRequest;
-import com.travelvn.tourbookingsytem.dto.response.ApiResponse;
+import com.travelvn.tourbookingsytem.dto.response.ApiAdResponse;
 import com.travelvn.tourbookingsytem.dto.response.AuthenticationResponse;
-import com.travelvn.tourbookingsytem.dto.response.IntrospectResponse;
+import com.travelvn.tourbookingsytem.dto.response.IntrospectAdResponse;
 import com.travelvn.tourbookingsytem.service.AuthenticationService;
-import com.travelvn.tourbookingsytem.service.UserAccountService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,8 +18,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseCookie;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,7 +46,7 @@ public class AuthenticationController {
      * @return Kết quả đăng nhập có chứa token
      */
     @PostMapping("/token")
-    public ApiResponse<AuthenticationResponse> authenticate(@RequestBody UserAccountRequest userAccountRequest, HttpServletResponse response) {
+    public ApiAdResponse<AuthenticationResponse> authenticate(@RequestBody UserAccountRequest userAccountRequest, HttpServletResponse response) {
 
         AuthenticationResponse authenticationResponse = authenticationService.authenticate(userAccountRequest);
 
@@ -74,7 +70,7 @@ public class AuthenticationController {
 
         authenticationResponse.setToken("");//Đã lưu token vào cookie thì không trả token về
 
-        return ApiResponse.<AuthenticationResponse>builder()
+        return ApiAdResponse.<AuthenticationResponse>builder()
                 .result(authenticationResponse)
                 .build();
     }
@@ -82,11 +78,11 @@ public class AuthenticationController {
     /**
      * API xác nhận token có hợp lệ
      *
-     * @param introspectRequest
+     * @param introspectAdRequest
      * @return
      */
     @PostMapping("/introspect")
-    public ApiResponse<IntrospectResponse> authenticate(@RequestBody IntrospectRequest introspectRequest)
+    public ApiAdResponse<IntrospectAdResponse> authenticate(@RequestBody IntrospectAdRequest introspectAdRequest)
             throws ParseException, JOSEException {
 
         /*
@@ -98,8 +94,8 @@ public class AuthenticationController {
         authentication.getAuthorities().forEach(grantedAuthority -> log.info("GrantedAuthority: {}", grantedAuthority));
         */
 
-        return ApiResponse.<IntrospectResponse>builder()
-                .result(authenticationService.introspect(introspectRequest))
+        return ApiAdResponse.<IntrospectAdResponse>builder()
+                .result(authenticationService.introspect(introspectAdRequest))
                 .build();
     }
 
@@ -128,7 +124,7 @@ public class AuthenticationController {
 
 //    @PreAuthorize("hasAnyRole('CUSTOMER','TOURGUIDE','TOUROPERATOR','ADMINISTRATOR')")
     @PostMapping("/logout")
-    public ApiResponse<Void> logout(HttpServletRequest request, HttpServletResponse response)
+    public ApiAdResponse<Void> logout(HttpServletRequest request, HttpServletResponse response)
             throws ParseException, JOSEException {
 
         log.info("Received logout request...");
@@ -152,12 +148,12 @@ public class AuthenticationController {
 
         log.info("Token trước logout: {}",token);
         if(token==null)
-            return ApiResponse.<Void>builder().build();
+            return ApiAdResponse.<Void>builder().build();
 
         log.info("Token không null");
 
-        LogoutRequest logoutRequest = new LogoutRequest(token);
-        authenticationService.logOut(logoutRequest);
+        LogoutAdRequest logoutAdRequest = new LogoutAdRequest(token);
+        authenticationService.logOut(logoutAdRequest);
 
         ResponseCookie cookie = ResponseCookie.from("token", "")
                 .httpOnly(true)
@@ -170,7 +166,7 @@ public class AuthenticationController {
 
         response.addHeader("Set-Cookie", cookie.toString()); // Cần HttpServletResponse để xóa cookie
 
-        return ApiResponse.<Void>builder().build();
+        return ApiAdResponse.<Void>builder().build();
     }
 
     /**
@@ -181,9 +177,9 @@ public class AuthenticationController {
      * @throws ParseException
      */
     @PostMapping("/refresh")
-    public ApiResponse<AuthenticationResponse> authenticate(@RequestBody RefreshTokenRequest request)
+    public ApiAdResponse<AuthenticationResponse> authenticate(@RequestBody RefreshTokenAdRequest request)
                     throws JOSEException, ParseException {
-        return ApiResponse.<AuthenticationResponse>builder()
+        return ApiAdResponse.<AuthenticationResponse>builder()
                 .result(authenticationService.refreshToken(request))
                 .build();
     }

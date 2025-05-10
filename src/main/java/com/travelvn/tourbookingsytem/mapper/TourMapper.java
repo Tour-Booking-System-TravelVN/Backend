@@ -1,7 +1,7 @@
 package com.travelvn.tourbookingsytem.mapper;
 
-import com.travelvn.tourbookingsytem.dto.request.TourRequest;
-import com.travelvn.tourbookingsytem.dto.response.TourResponse;
+import com.travelvn.tourbookingsytem.dto.request.TourAdRequest;
+import com.travelvn.tourbookingsytem.dto.response.TourAdResponse;
 import com.travelvn.tourbookingsytem.model.Tour;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -16,13 +16,13 @@ public interface TourMapper {
     @Mapping(target = "category", ignore = true)
     @Mapping(target = "tourOperator", ignore = true)
     @Mapping(target = "lastUpdatedOperator", ignore = true)
-    Tour toEntity(TourRequest tourRequest);
+    Tour toEntity(TourAdRequest tourAdRequest);
 
-    TourResponse toResponse(Tour tour);
+    TourAdResponse toResponse(Tour tour);
 
     @Mapping(target = "tourId", ignore = true)
     @Mapping(target = "category", ignore = true)
     @Mapping(target = "tourOperator", ignore = true)
     @Mapping(target = "lastUpdatedOperator", ignore = true)
-    void updateEntityFromRequest(TourRequest tourRequest, @MappingTarget Tour tour);
+    void updateEntityFromRequest(TourAdRequest tourAdRequest, @MappingTarget Tour tour);
 }

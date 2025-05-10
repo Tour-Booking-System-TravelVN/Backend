@@ -1,6 +1,5 @@
 package com.travelvn.tourbookingsytem.dto.response;
 
-import com.travelvn.tourbookingsytem.model.Customer;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -15,9 +14,9 @@ import java.time.Instant;
 public class BookingResponse {
     private String bookingId;
 
-    private CustomerResponse c;
+    private CustomerAdResponse c;
 
-    private TourUnitResponse tourUnit;
+    private TourUnitAdResponse tourUnit;
 
     private Instant bookingDate;
 

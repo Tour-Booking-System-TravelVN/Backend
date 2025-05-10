@@ -1,6 +1,5 @@
 package com.travelvn.tourbookingsytem.dto.request;
 
-import com.travelvn.tourbookingsytem.exception.ErrorCode;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -20,13 +19,13 @@ public class UserAccountRequest {
     @NotNull
     private String password;
 
-    private CustomerRequest c;
+    private CustomerAdRequest c;
 
-    private AdministratorRequest administrator;
+    private AdministratorAdRequest administrator;
 
-    private TourGuideRequest tourGuide;
+    private TourGuideAdRequest tourGuide;
 
-    private TourOperatorRequest tourOperator;
+    private TourOperatorAdRequest tourOperator;
 
     private String status;
 

@@ -5,14 +5,12 @@ import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import com.travelvn.tourbookingsytem.dto.request.IntrospectRequest;
-import com.travelvn.tourbookingsytem.dto.request.LogoutRequest;
-import com.travelvn.tourbookingsytem.dto.request.RefreshTokenRequest;
+import com.travelvn.tourbookingsytem.dto.request.IntrospectAdRequest;
+import com.travelvn.tourbookingsytem.dto.request.LogoutAdRequest;
+import com.travelvn.tourbookingsytem.dto.request.RefreshTokenAdRequest;
 import com.travelvn.tourbookingsytem.dto.request.UserAccountRequest;
 import com.travelvn.tourbookingsytem.dto.response.AuthenticationResponse;
-import com.travelvn.tourbookingsytem.dto.response.IntrospectResponse;
-import com.travelvn.tourbookingsytem.dto.response.PersonResponse;
-import com.travelvn.tourbookingsytem.dto.response.UserAccountResponse;
+import com.travelvn.tourbookingsytem.dto.response.IntrospectAdResponse;
 import com.travelvn.tourbookingsytem.enums.Role;
 import com.travelvn.tourbookingsytem.exception.AppException;
 import com.travelvn.tourbookingsytem.exception.ErrorCode;
@@ -159,14 +157,14 @@ public class AuthenticationService {
     /**
      * Kiểm tra Token đúng không
      *
-     * @param introspectRequest Chứa token
+     * @param introspectAdRequest Chứa token
      * @return  Kết quả verify
      * @throws JOSEException
      * @throws ParseException
      */
-    public IntrospectResponse introspect(IntrospectRequest introspectRequest)
+    public IntrospectAdResponse introspect(IntrospectAdRequest introspectAdRequest)
             throws JOSEException, ParseException {
-        var token = introspectRequest.getToken();
+        var token = introspectAdRequest.getToken();
         boolean isValid = true;
 
         try {
@@ -175,7 +173,7 @@ public class AuthenticationService {
             isValid = false;
         }
 
-        return IntrospectResponse.builder()
+        return IntrospectAdResponse.builder()
                 .valid(isValid)
                 .build();
     }
@@ -246,7 +244,7 @@ public class AuthenticationService {
      *
      * @param request token
      */
-    public void logOut(LogoutRequest request)
+    public void logOut(LogoutAdRequest request)
                 throws ParseException, JOSEException {
         try {
             var signToken = verifyToken(request.getToken(), true);
@@ -283,7 +281,7 @@ public class AuthenticationService {
      * @throws ParseException
      * @throws JOSEException
      */
-    public AuthenticationResponse refreshToken(RefreshTokenRequest request) throws ParseException, JOSEException {
+    public AuthenticationResponse refreshToken(RefreshTokenAdRequest request) throws ParseException, JOSEException {
         var signJWT = verifyToken(request.getToken(), true);
 
         var jit = signJWT.getJWTClaimsSet().getJWTID();

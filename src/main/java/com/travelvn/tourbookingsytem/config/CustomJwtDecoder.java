@@ -1,7 +1,7 @@
 package com.travelvn.tourbookingsytem.config;
 
 import com.nimbusds.jose.JOSEException;
-import com.travelvn.tourbookingsytem.dto.request.IntrospectRequest;
+import com.travelvn.tourbookingsytem.dto.request.IntrospectAdRequest;
 import com.travelvn.tourbookingsytem.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,7 +37,7 @@ public class CustomJwtDecoder implements JwtDecoder {
 
         try{
             //Kiểm tra token có còn hợp lệ
-            var response = authenticationService.introspect(IntrospectRequest.builder()
+            var response = authenticationService.introspect(IntrospectAdRequest.builder()
                             .token(token)
                             .build());
 

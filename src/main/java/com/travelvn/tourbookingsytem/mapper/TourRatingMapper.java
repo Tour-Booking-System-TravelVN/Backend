@@ -1,6 +1,6 @@
 package com.travelvn.tourbookingsytem.mapper;
 
-import com.travelvn.tourbookingsytem.dto.response.TourRatingResponse;
+import com.travelvn.tourbookingsytem.dto.response.TourRatingAdResponse;
 import com.travelvn.tourbookingsytem.model.TourRating;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -9,5 +9,5 @@ import org.mapstruct.factory.Mappers;
 public interface TourRatingMapper {
     TourRatingMapper INSTANCE = Mappers.getMapper(TourRatingMapper.class);
 
-    TourRatingResponse toResponse(TourRating tourRating);
+    TourRatingAdResponse toResponse(TourRating tourRating);
 }

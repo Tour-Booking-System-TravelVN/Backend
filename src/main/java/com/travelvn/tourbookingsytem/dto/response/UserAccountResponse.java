@@ -13,13 +13,13 @@ public class UserAccountResponse {
 
 //    private String password;
 
-    private CustomerResponse c;
+    private CustomerAdResponse c;
 
-    private AdministratorResponse administrator;
+    private AdministratorAdResponse administrator;
 
-    private TourGuideResponse tourGuide;
+    private TourGuideAdResponse tourGuide;
 
-    private TourOperatorResponse tourOperator;
+    private TourOperatorAdResponse tourOperator;
 
     private String status;
 

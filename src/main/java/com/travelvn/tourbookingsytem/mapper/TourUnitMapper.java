@@ -1,7 +1,7 @@
 package com.travelvn.tourbookingsytem.mapper;
 
-import com.travelvn.tourbookingsytem.dto.request.TourUnitRequest;
-import com.travelvn.tourbookingsytem.dto.response.TourUnitResponse;
+import com.travelvn.tourbookingsytem.dto.request.TourUnitAdRequest;
+import com.travelvn.tourbookingsytem.dto.response.TourUnitAdResponse;
 import com.travelvn.tourbookingsytem.model.TourUnit;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -20,9 +20,9 @@ public interface TourUnitMapper {
     @Mapping(target = "guideSet", ignore = true)
     @Mapping(target = "bookingSet", ignore = true)
     @Mapping(target = "ratingSet", ignore = true)
-    TourUnit toEntity(TourUnitRequest tourUnitRequest);
+    TourUnit toEntity(TourUnitAdRequest tourUnitAdRequest);
 
-    TourUnitResponse toResponse(TourUnit tourUnit);
+    TourUnitAdResponse toResponse(TourUnit tourUnit);
 
     @Mapping(target = "tourUnitId", ignore = true)
     @Mapping(target = "festival", ignore = true)
@@ -33,5 +33,5 @@ public interface TourUnitMapper {
     @Mapping(target = "guideSet", ignore = true)
     @Mapping(target = "bookingSet", ignore = true)
     @Mapping(target = "ratingSet", ignore = true)
-    void updateEntityFromRequest(TourUnitRequest tourUnitRequest, @MappingTarget TourUnit tourUnit);
+    void updateEntityFromRequest(TourUnitAdRequest tourUnitAdRequest, @MappingTarget TourUnit tourUnit);
 }

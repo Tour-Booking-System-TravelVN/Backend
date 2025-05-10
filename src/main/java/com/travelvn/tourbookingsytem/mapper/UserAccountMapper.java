@@ -6,7 +6,7 @@ import com.travelvn.tourbookingsytem.model.UserAccount;
 import org.mapstruct.*;
 
 @Named("UserAccountMapper")
-@Mapper(componentModel = "spring", /*unmappedTargetPolicy = ReportingPolicy.IGNORE,*/ uses = {CustomerMapper.class, AdministatorMapper.class, TourGuideMapper.class, TourOperatorMapper.class})
+@Mapper(componentModel = "spring", /*unmappedTargetPolicy = ReportingPolicy.IGNORE,*/ uses = {CustomerAdMapper.class, AdministratorAdMapper.class, TourGuideMapper.class, TourOperatorMapper.class})
 public interface UserAccountMapper {
     UserAccount toUserAccount(UserAccountRequest userAccountRequest);
 //    UserAccount toUserAccount(UserAccountResponse userAccountResponse);

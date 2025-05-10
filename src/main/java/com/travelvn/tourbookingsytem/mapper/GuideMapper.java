@@ -1,18 +1,16 @@
 package com.travelvn.tourbookingsytem.mapper;
 
-import com.travelvn.tourbookingsytem.dto.request.CustomerRequest;
-import com.travelvn.tourbookingsytem.dto.request.GuideRequest;
-import com.travelvn.tourbookingsytem.dto.response.GuideResponse;
-import com.travelvn.tourbookingsytem.model.Customer;
+import com.travelvn.tourbookingsytem.dto.request.GuideAdRequest;
+import com.travelvn.tourbookingsytem.dto.response.GuideAdResponse;
 import com.travelvn.tourbookingsytem.model.Guide;
 import org.mapstruct.Mapper;
 
 //@Component
 @Mapper(componentModel = "spring")
 public interface GuideMapper {
-    Guide toGuide(GuideRequest guideRequest);
+    Guide toGuide(GuideAdRequest guideAdRequest);
 //    Guide toGuide(GuideResponse guideResponse);
 
-    GuideResponse toGuideResponse(Guide guide);
+    GuideAdResponse toGuideResponse(Guide guide);
 //    GuideRequest toGuideRequest(Guide guide);
 }

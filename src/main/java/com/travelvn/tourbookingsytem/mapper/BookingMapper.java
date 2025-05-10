@@ -8,7 +8,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 
-@Mapper(componentModel = "spring", uses = {CustomerMapper.class, TourUnitMapper.class})
+@Mapper(componentModel = "spring", uses = {CustomerAdMapper.class, TourUnitMapper.class})
 public interface BookingMapper {
     BookingMapper INSTANCE = Mappers.getMapper(BookingMapper.class);
 

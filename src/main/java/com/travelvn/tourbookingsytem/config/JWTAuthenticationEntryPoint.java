@@ -1,7 +1,7 @@
 package com.travelvn.tourbookingsytem.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.travelvn.tourbookingsytem.dto.response.ApiResponse;
+import com.travelvn.tourbookingsytem.dto.response.ApiAdResponse;
 import com.travelvn.tourbookingsytem.exception.ErrorCode;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,7 +31,7 @@ public class JWTAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.setStatus(errorCode.getStatusCode().value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
-        ApiResponse<?> apiResponse = ApiResponse.builder()
+        ApiAdResponse<?> apiAdResponse = ApiAdResponse.builder()
                 .code(errorCode.getCode())
                 .message(errorCode.getMessage())
                 .build();
@@ -40,7 +40,7 @@ public class JWTAuthenticationEntryPoint implements AuthenticationEntryPoint {
         ObjectMapper mapper = new ObjectMapper();
 
         //Trả về json lỗi
-        response.getWriter().write(mapper.writeValueAsString(apiResponse));
+        response.getWriter().write(mapper.writeValueAsString(apiAdResponse));
         response.flushBuffer();
     }
 }
