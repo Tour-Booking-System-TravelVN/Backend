@@ -1,9 +1,12 @@
 package com.travelvn.tourbookingsytem.dto.response;
 
+import com.travelvn.tourbookingsytem.dto.response.lite.CompanionCustomerResponseLite;
 import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -14,9 +17,9 @@ import java.time.Instant;
 public class BookingResponse {
     private String bookingId;
 
-    private CustomerAdResponse c;
+    private CustomerResponse c;
 
-    private TourUnitAdResponse tourUnit;
+    private TourUnitResponse tourUnit;
 
     private Instant bookingDate;
 
@@ -36,4 +39,7 @@ public class BookingResponse {
 
     private BigDecimal totalAmount;
 
+    private Byte privateRoomNumber;
+
+    private Set<CompanionCustomerResponseLite> companionCustomerSet;
 }

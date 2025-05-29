@@ -1,5 +1,6 @@
 package com.travelvn.tourbookingsytem.dto.response;
 
+import com.travelvn.tourbookingsytem.dto.response.lite.CustomerResponseLite;
 import lombok.*;
 
 @Getter
@@ -13,13 +14,13 @@ public class UserAccountResponse {
 
 //    private String password;
 
-    private CustomerAdResponse c;
+    private CustomerResponseLite c;
 
-    private AdministratorAdResponse administrator;
+    private AdministratorResponse administrator;
 
-    private TourGuideAdResponse tourGuide;
+    private TourGuideResponse tourGuide;
 
-    private TourOperatorAdResponse tourOperator;
+    private TourOperatorResponse tourOperator;
 
     private String status;
 

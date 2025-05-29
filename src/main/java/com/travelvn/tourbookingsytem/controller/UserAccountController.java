@@ -1,8 +1,10 @@
 package com.travelvn.tourbookingsytem.controller;
 
 import com.travelvn.tourbookingsytem.dto.request.UserAccountRequest;
-import com.travelvn.tourbookingsytem.dto.response.ApiAdResponse;
+import com.travelvn.tourbookingsytem.dto.request.useraccount.ChangePwdRequest;
+import com.travelvn.tourbookingsytem.dto.response.ApiResponse;
 import com.travelvn.tourbookingsytem.dto.response.AuthenticationResponse;
+import com.travelvn.tourbookingsytem.dto.response.UserAccountResponse;
 import com.travelvn.tourbookingsytem.service.AuthenticationService;
 import com.travelvn.tourbookingsytem.service.UserAccountService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -47,15 +49,16 @@ public class UserAccountController {
      * @return token
      */
     @PostMapping("/register")
-    public ApiAdResponse<AuthenticationResponse> register(@RequestBody @Valid UserAccountRequest userAccountRequest, HttpServletResponse response) {
+    public ApiResponse<AuthenticationResponse> register(@RequestBody @Valid UserAccountRequest userAccountRequest, HttpServletResponse response) {
 //        log.info("UserAccountRequest : {}", userAccountRequest);
 //        log.info("Before");
         userAccountService.addUserAccount(userAccountRequest);
 
 //        log.info("After");
 
+        AuthenticationResponse authenticationResponse = authenticationService.authenticate(userAccountRequest);
         // Lấy token được tạo sau khi kiểm tra username & password
-        String jwtToken = authenticationService.authenticate(userAccountRequest).getToken();
+        String jwtToken = authenticationResponse.getToken();
 
         // Tạo HttpOnly Cookie
         ResponseCookie cookie = ResponseCookie.from("token", jwtToken)
@@ -70,22 +73,54 @@ public class UserAccountController {
         // Set Cookie vào Response Header
         response.addHeader("Set-Cookie", cookie.toString());
 
-        return ApiAdResponse.<AuthenticationResponse>builder()
-                .result(authenticationService.authenticate(userAccountRequest))
+        //Xóa token đi
+        authenticationResponse.setToken("");
+
+        return ApiResponse.<AuthenticationResponse>builder()
+                .result(authenticationResponse)
                 .build();
     }
 
     /**
+     * API Đăng ký tài khoản app
+     *
+     * @param userAccountRequest yêu cầu đăng ký
+     * @return token
+     */
+    @PostMapping("/registerapp")
+    public ApiResponse<AuthenticationResponse> registerapp(@RequestBody @Valid UserAccountRequest userAccountRequest, HttpServletResponse response) {
+        userAccountService.addUserAccount(userAccountRequest);
+
+//        log.info("After");
+
+        AuthenticationResponse authenticationResponse = authenticationService.authenticate(userAccountRequest);
+
+        return ApiResponse.<AuthenticationResponse>builder()
+                .result(authenticationResponse)
+                .build();
+    }
+
+    /** TEMPT NOT USED
      * API lấy thông tin của mình
      *
      * @return API thông tin của mình
      */
-//    @GetMapping("/myInfo")
-//    public ApiResponse<UserAccountResponse> getMyInfo() {
-//        return ApiResponse.<UserAccountResponse>builder()
-//                .result(userAccountService.getMyInfo())
-//                .build();
-//    }
-//Quang anh
-// da test
+    @GetMapping("/myInfo")
+    public ApiResponse<UserAccountResponse> getMyInfo() {
+        return ApiResponse.<UserAccountResponse>builder()
+                .result(userAccountService.getMyInfo())
+                .build();
+    }
+
+    /**
+     * API đổi mật khẩu
+     * @param changePwdRequest Yêu cầu đổi mật khẩu
+     * @return Kết quả đổi mật khẩu
+     */
+    @PutMapping("/changePwd")
+    public ApiResponse<Boolean> changePwd(@Valid @RequestBody ChangePwdRequest changePwdRequest){
+        return ApiResponse.<Boolean>builder()
+                .result(userAccountService.changePwd(changePwdRequest))
+                .build();
+    }
 }

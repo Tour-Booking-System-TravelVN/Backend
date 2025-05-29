@@ -14,6 +14,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 @ToString
+@EqualsAndHashCode(exclude = {"userAccount", "bookingSet", "companionCustomerSet", "tourRatingSet"})
 @Entity
 @Table(name = "customer")
 public class Customer {

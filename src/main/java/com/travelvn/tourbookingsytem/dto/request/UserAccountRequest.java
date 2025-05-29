@@ -1,5 +1,8 @@
 package com.travelvn.tourbookingsytem.dto.request;
 
+import com.travelvn.tourbookingsytem.dto.request.lite.CustomerRequestLite;
+import com.travelvn.tourbookingsytem.exception.ErrorCode;
+import com.travelvn.tourbookingsytem.validator.EmailConstraint;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -19,15 +22,16 @@ public class UserAccountRequest {
     @NotNull
     private String password;
 
-    private CustomerAdRequest c;
+    private CustomerRequestLite c;
 
-    private AdministratorAdRequest administrator;
+    private AdministratorRequest administrator;
 
-    private TourGuideAdRequest tourGuide;
+    private TourGuideRequest tourGuide;
 
-    private TourOperatorAdRequest tourOperator;
+    private TourOperatorRequest tourOperator;
 
     private String status;
 
+    @EmailConstraint(message = "INVALID_EMAIL")
     private String email;
 }

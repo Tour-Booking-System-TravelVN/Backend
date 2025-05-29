@@ -12,5 +12,6 @@ import lombok.experimental.FieldDefaults;
 public class AuthenticationResponse {
     String token;
     String fullname;
+    String role;
     boolean authenticated;
 }

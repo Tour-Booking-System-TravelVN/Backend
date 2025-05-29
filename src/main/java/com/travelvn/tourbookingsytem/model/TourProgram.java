@@ -29,11 +29,11 @@ public class TourProgram {
     @Column(name = "day", nullable = false)
     private Byte day;
 
-    @Column(name = "meal_description", nullable = false, length = 20)
+    @Column(name = "meal_description", nullable = false, length = 50)
     private String mealDescription;
 
     @Lob
-    @Column(name = "desciption", nullable = false)
+    @Column(name = "desciption", columnDefinition = "TEXT", nullable = false)
     private String desciption;
 
 }

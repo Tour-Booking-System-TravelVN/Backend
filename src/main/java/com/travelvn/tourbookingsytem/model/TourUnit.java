@@ -21,7 +21,7 @@ import java.util.Set;
 @Table(name = "tour_unit")
 public class TourUnit {
     @Id
-    @Column(name = "tour_unit_id", length = 24)
+    @Column(name = "tour_unit_id", nullable = false, length = 24)
     private String tourUnitId;
 
     @ToString.Exclude
@@ -87,46 +87,46 @@ public class TourUnit {
     @Column(name = "departure_date")
     private LocalDate departureDate;
 
-    @Column(name = "return_date")
+    @Column(name = "return_date", nullable = false)
     private LocalDate returnDate;
 
-    @Column(name = "adult_tour_price", precision = 19, scale = 3)
+    @Column(name = "adult_tour_price", nullable = false, precision = 19, scale = 3)
     private BigDecimal adultTourPrice;
 
-    @Column(name = "child_tour_price", precision = 19, scale = 3)
+    @Column(name = "child_tour_price", nullable = false, precision = 19, scale = 3)
     private BigDecimal childTourPrice;
 
-    @Column(name = "toddler_tour_price", precision = 19, scale = 3)
+    @Column(name = "toddler_tour_price", nullable = false, precision = 19, scale = 3)
     private BigDecimal toddlerTourPrice;
 
-    @Column(name = "baby_tour_price", precision = 19, scale = 3)
+    @Column(name = "baby_tour_price", nullable = false, precision = 19, scale = 3)
     private BigDecimal babyTourPrice;
 
-    @Column(name = "adult_tour_cost", precision = 19, scale = 3)
+    @Column(name = "adult_tour_cost", nullable = false, precision = 19, scale = 3)
     private BigDecimal adultTourCost;
 
-    @Column(name = "child_tour_cost", precision = 19, scale = 3)
+    @Column(name = "child_tour_cost", nullable = false, precision = 19, scale = 3)
     private BigDecimal childTourCost;
 
-    @Column(name = "toddler_tour_cost", precision = 19, scale = 3)
+    @Column(name = "toddler_tour_cost", nullable = false, precision = 19, scale = 3)
     private BigDecimal toddlerTourCost;
 
-    @Column(name = "baby_tour_cost", precision = 19, scale = 3)
+    @Column(name = "baby_tour_cost", nullable = false, precision = 19, scale = 3)
     private BigDecimal babyTourCost;
 
-    @Column(name = "private_room_price", precision = 19, scale = 3)
+    @Column(name = "private_room_price", nullable = false, precision = 19, scale = 3)
     private BigDecimal privateRoomPrice;
 
-    @Column(name = "created_time")
+    @Column(name = "created_time", nullable = false)
     private Instant createdTime;
 
     @Column(name = "last_updated_time")
     private Instant lastUpdatedTime;
 
-    @Column(name = "maximum_capacity")
+    @Column(name = "maximum_capacity", nullable = false)
     private Short maximumCapacity;
 
-    @Column(name = "available_capacity")
+    @Column(name = "available_capacity", nullable = false)
     private Short availableCapacity;
 
     @Column(name = "total_additional_cost", precision = 19, scale = 3)
@@ -146,4 +146,8 @@ public class TourUnit {
     @JsonIgnore
     @OneToMany(mappedBy = "tourUnit", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<TourRating> ratingSet = new HashSet<>();
+
+    @ToString.Exclude
+    @OneToMany(mappedBy = "tourUnit")
+    private Set<TourRating> tourRatingSet = new HashSet<>();
 }

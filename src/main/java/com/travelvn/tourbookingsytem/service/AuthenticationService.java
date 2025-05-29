@@ -5,12 +5,14 @@ import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import com.travelvn.tourbookingsytem.dto.request.IntrospectAdRequest;
-import com.travelvn.tourbookingsytem.dto.request.LogoutAdRequest;
-import com.travelvn.tourbookingsytem.dto.request.RefreshTokenAdRequest;
+import com.travelvn.tourbookingsytem.dto.request.IntrospectRequest;
+import com.travelvn.tourbookingsytem.dto.request.LogoutRequest;
+import com.travelvn.tourbookingsytem.dto.request.RefreshTokenRequest;
 import com.travelvn.tourbookingsytem.dto.request.UserAccountRequest;
 import com.travelvn.tourbookingsytem.dto.response.AuthenticationResponse;
-import com.travelvn.tourbookingsytem.dto.response.IntrospectAdResponse;
+import com.travelvn.tourbookingsytem.dto.response.IntrospectResponse;
+import com.travelvn.tourbookingsytem.dto.response.PersonResponse;
+import com.travelvn.tourbookingsytem.dto.response.UserAccountResponse;
 import com.travelvn.tourbookingsytem.enums.Role;
 import com.travelvn.tourbookingsytem.exception.AppException;
 import com.travelvn.tourbookingsytem.exception.ErrorCode;
@@ -19,6 +21,8 @@ import com.travelvn.tourbookingsytem.model.InvalidatedToken;
 import com.travelvn.tourbookingsytem.model.UserAccount;
 import com.travelvn.tourbookingsytem.repository.InvalidatedTokenRepository;
 import com.travelvn.tourbookingsytem.repository.UserAccountRepository;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
@@ -28,6 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -83,12 +88,17 @@ public class AuthenticationService {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
 
-        UserAccount userAccount = userAccountMapper.toUserAccount(userAccountRequest);
-        var token = generateToken(userAccount);
+        if(user.getStatus().equalsIgnoreCase("LOCK")){
+            throw new AppException(ErrorCode.ACCOUNT_LOCKED);
+        }
+
+//        UserAccount userAccount = userAccountMapper.toUserAccount(userAccountRequest);
+        var token = generateToken(user);
 
         return AuthenticationResponse.builder()
                 .token(token)
                 .fullname(getFullName(user))
+                .role(buildScope(user))
                 .build();
     }
 
@@ -100,7 +110,7 @@ public class AuthenticationService {
      */
     private String getFullName(UserAccount userAccount) {
         String fullname = "";
-        log.info("Có null không: {}", userAccount.getC()==null);
+//        log.info("Có null không: {}", userAccount.getC()==null);
         if(userAccount.getC()!=null){
             fullname = userAccount.getC().getFirstname() + " " + userAccount.getC().getLastname();
         } else if(userAccount.getTourOperator()!=null){
@@ -157,15 +167,17 @@ public class AuthenticationService {
     /**
      * Kiểm tra Token đúng không
      *
-     * @param introspectAdRequest Chứa token
+     * @param introspectRequest Chứa token
      * @return  Kết quả verify
      * @throws JOSEException
      * @throws ParseException
      */
-    public IntrospectAdResponse introspect(IntrospectAdRequest introspectAdRequest)
+    public IntrospectResponse introspect(IntrospectRequest introspectRequest)
             throws JOSEException, ParseException {
-        var token = introspectAdRequest.getToken();
+        var token = introspectRequest.getToken();
         boolean isValid = true;
+
+        log.info("ĐÃ ĐI VÀO");
 
         try {
             verifyToken(token, false);
@@ -173,7 +185,47 @@ public class AuthenticationService {
             isValid = false;
         }
 
-        return IntrospectAdResponse.builder()
+        log.info("ĐÃ ĐI RA");
+//        log.info("Flag1");
+
+        return IntrospectResponse.builder()
+                .valid(isValid)
+                .build();
+    }
+
+    public IntrospectResponse introspect(HttpServletRequest request)
+            throws JOSEException, ParseException {
+        String token = null;
+
+        // Lấy tất cả cookies từ request
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            // Duyệt qua các cookie để tìm cookie chứa token
+            for (Cookie cookie : cookies) {
+                if ("token".equals(cookie.getName())) {  // Kiểm tra cookie có tên "token"
+                    token = cookie.getValue();  // Lấy giá trị token
+                    break;
+                }
+            }
+        }
+
+        if (token == null) {
+            throw new JwtException("Token not found in cookies");
+        }
+
+        boolean isValid = true;
+
+        log.info("ĐÃ ĐI VÀO 2");
+
+        try {
+            verifyToken(token, true);  // Kiểm tra tính hợp lệ của token
+        } catch (Exception e) {
+            isValid = false;  // Nếu có lỗi thì token không hợp lệ
+        }
+
+        log.info("ĐÃ ĐI RA 2");
+
+        return IntrospectResponse.builder()
                 .valid(isValid)
                 .build();
     }
@@ -228,7 +280,12 @@ public class AuthenticationService {
 
         //Xác nhận token
         var verified = signedJWT.verify(verifier);
+        log.info(signedJWT.getJWTClaimsSet().getExpirationTime().toString());
 
+        log.info("Token verification status: {}", verified);
+        log.info("Time exp: {}", expirationTime);
+
+        //Sửa thêm ! đk sau
         if(!(verified && expirationTime.after(new Date())))
             throw new AppException(ErrorCode.UNAUTHENTICATED);
 
@@ -244,7 +301,7 @@ public class AuthenticationService {
      *
      * @param request token
      */
-    public void logOut(LogoutAdRequest request)
+    public void logOut(LogoutRequest request)
                 throws ParseException, JOSEException {
         try {
             var signToken = verifyToken(request.getToken(), true);
@@ -253,7 +310,7 @@ public class AuthenticationService {
 
             Date expiryTime = signToken.getJWTClaimsSet().getExpirationTime();
 
-            log.info("DATETIME: {}", expiryTime.toInstant());
+//            log.info("DATETIME: {}", expiryTime.toInstant());
 
             invalidatedTokenRepository.save(InvalidatedToken.builder()
                             .tokenId(jit)
@@ -281,7 +338,7 @@ public class AuthenticationService {
      * @throws ParseException
      * @throws JOSEException
      */
-    public AuthenticationResponse refreshToken(RefreshTokenAdRequest request) throws ParseException, JOSEException {
+    public AuthenticationResponse refreshToken(RefreshTokenRequest request) throws ParseException, JOSEException {
         var signJWT = verifyToken(request.getToken(), true);
 
         var jit = signJWT.getJWTClaimsSet().getJWTID();
@@ -303,6 +360,7 @@ public class AuthenticationService {
         return AuthenticationResponse.builder()
                 .token(token)
                 .fullname(getFullName(user))
+                .role(buildScope(user))
                 .build();
 
     }

@@ -19,55 +19,114 @@ import java.util.Arrays;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter implements BearerTokenResolver {
 
+    private final DefaultBearerTokenResolver defaultBearerTokenResolver = new DefaultBearerTokenResolver();
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        try {
-            // Lấy Cookie từ request
-            Cookie[] cookies = request.getCookies();
-            if (cookies != null) {
-                Arrays.stream(cookies)
-                        .filter(cookie -> "token".equals(cookie.getName()))
-                        .findFirst()
-                        .ifPresent(cookie -> {
-                            String jwtToken = cookie.getValue();
-                            log.info("Token found in Cookie: {}", jwtToken);
-                            // Xử lý xác thực nếu cần (hiện tại chỉ log)
-                        });
-            }
-            filterChain.doFilter(request, response);
-        } catch (Exception e) {
-            log.error("Error in JwtAuthenticationFilter: {}", e.getMessage(), e);
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.setContentType("application/json");
-            response.getWriter().write("{\"error\": \"Internal server error in authentication filter\"}");
+
+//        String path = request.getRequestURI();
+//        if (path.equals("/auth/introspect")) {
+//            // Không cần set authentication ở đây, cứ cho đi tiếp
+//            filterChain.doFilter(request, response);
+////            return;
+//        }
+
+        String jwtToken = resolveToken(request); // Lấy token từ cả cookie và header
+
+        if (jwtToken != null && !jwtToken.isEmpty()) {
+            System.out.println("Token found: " + jwtToken);
+            // Xử lý xác thực (Ví dụ: kiểm tra token hợp lệ, load user từ database)
         }
+
+        filterChain.doFilter(request, response);
+
+//          Cookie từ request
+//        Cookie[] cookies = request.getCookies();
+//        if (cookies != null) {
+//            Arrays.stream(cookies)
+//                    .filter(cookie -> "token".equals(cookie.getName()))  // Tìm cookie tên "token"
+//                    .findFirst()
+//                    .ifPresent(cookie -> {
+//                        String jwtTokenCookie = cookie.getValue();
+//                        System.out.println("Token found in Cookie: " + jwtTokenCookie);
+//
+//                        // Xử lý xác thực (Ví dụ: kiểm tra token hợp lệ, load user từ database)
+//                    });
+//        }
+//
+//        filterChain.doFilter(request, response);
     }
 
+    /**
+     * Lấy cookie từ request
+     * @param request
+     * @return token hoặc null nếu không tìm thấy
+     */
     public static String extractTokenFromCookie(HttpServletRequest request) {
-        log.info("Extracting token from cookies");
+//        log.info("Request: " + request.getCookies());
         Cookie[] cookies = request.getCookies();
+//        log.info("??? "+Arrays.toString(cookies));
         if (cookies != null) {
-            log.info("Cookies found: {}", Arrays.toString(cookies));
             for (Cookie cookie : cookies) {
-                if ("token".equals(cookie.getName())) {
-                    log.info("Found token cookie: {}", cookie.getValue());
+                if (cookie.getName().equals("token")) {
                     return cookie.getValue();
                 }
             }
         }
-        log.info("No token cookie found");
         return null;
     }
 
+    /**
+     * Lấy cookie từ request
+     * @param request
+     * @return
+     */
+//    @Override
+//    public String resolve(HttpServletRequest request) {
+//        Cookie cookie = WebUtils.getCookie(request, "token");
+//        if (cookie != null)
+//            return cookie.getValue();
+//        else
+//            return new DefaultBearerTokenResolver().resolve(request);
+//    }
+
+    /**
+     * Lấy token từ cookie hoặc header Authorization.
+     * @param request HttpServletRequest
+     * @return token hoặc null nếu không tìm thấy
+     */
+    private String resolveToken(HttpServletRequest request) {
+        String headerToken = defaultBearerTokenResolver.resolve(request);
+        if (headerToken != null) return headerToken;
+
+        // Kiểm tra cookie
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            return Arrays.stream(cookies)
+                    .filter(cookie -> "token".equals(cookie.getName()))
+                    .findFirst()
+                    .map(Cookie::getValue)
+                    .orElse(null);
+        }
+//        return Arrays.stream(cookies)
+//                .filter(cookie -> "token".equals(cookie.getName()))
+//                .findFirst()
+//                .map(Cookie::getValue)
+//                .orElse(null);
+
+        return null;
+        // Nếu không tìm thấy trong cookie, kiểm tra header Authorization
+//        return defaultBearerTokenResolver.resolve(request);
+    }
+
+    /**
+     * Lấy token từ cookie hoặc header Authorization.
+     * @param request HttpServletRequest
+     * @return token hoặc null nếu không tìm thấy
+     */
     @Override
     public String resolve(HttpServletRequest request) {
-        Cookie cookie = WebUtils.getCookie(request, "token");
-        if (cookie != null) {
-            log.info("Resolved token from cookie: {}", cookie.getValue());
-            return cookie.getValue();
-        }
-        log.info("No token in cookie, falling back to DefaultBearerTokenResolver");
-        return new DefaultBearerTokenResolver().resolve(request);
+        return resolveToken(request);
     }
 }

@@ -2,13 +2,18 @@ package com.travelvn.tourbookingsytem.mapper;
 
 import com.travelvn.tourbookingsytem.dto.request.TourUnitAdRequest;
 import com.travelvn.tourbookingsytem.dto.response.TourUnitAdResponse;
+import com.travelvn.tourbookingsytem.dto.response.TourUnitResponse;
 import com.travelvn.tourbookingsytem.model.TourUnit;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
+import org.mapstruct.Named;
 
-@Mapper(componentModel = "spring")
+@Named("TourUnitMapper")
+@Mapper(componentModel = "spring", uses = {TourMapper.class})
 public interface TourUnitMapper {
     TourUnitMapper INSTANCE = Mappers.getMapper(TourUnitMapper.class);
 
@@ -34,4 +39,17 @@ public interface TourUnitMapper {
     @Mapping(target = "bookingSet", ignore = true)
     @Mapping(target = "ratingSet", ignore = true)
     void updateEntityFromRequest(TourUnitAdRequest tourUnitAdRequest, @MappingTarget TourUnit tourUnit);
+//    TourUnit toTourUnit(TourUnitResponse tourUnitResponse);
+//    TourUnitResponse toTourUnitResponse(TourUnit tourUnit);
+
+    @Named("toTourUnitDTOFound")
+    @Mappings({
+            @Mapping(target = "tourOperator", ignore = true),
+            @Mapping(target = "lastUpdatedOperator", ignore = true),
+            @Mapping(target = "createdTime", ignore = true),
+            @Mapping(target = "lastUpdatedTime", ignore = true),
+            @Mapping(source = "tour", target = "tour", qualifiedByName = {"TourMapper", "toTourResponseByFound"})
+    })
+
+    TourUnitResponse toTourUnitResponseByFound(TourUnit tourUnit);
 }

@@ -14,6 +14,7 @@ import lombok.*;
 @Table(name = "companion_customer")
 public class CompanionCustomer {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "companion_customer_id", nullable = false)
     private Integer id;
 
