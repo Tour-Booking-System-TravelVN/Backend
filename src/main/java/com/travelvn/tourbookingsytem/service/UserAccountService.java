@@ -83,7 +83,7 @@ public class UserAccountService {
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         log.info(account.toString());
-        log.info(account.getC().toString());
+        //log.info(account.getC().toString());
         log.info(userAccountMapper.toUserAccountResponse(account).toString());
         return userAccountMapper.toUserAccountResponse(account);
     }

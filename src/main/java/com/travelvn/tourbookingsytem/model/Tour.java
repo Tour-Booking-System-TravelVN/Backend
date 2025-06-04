@@ -64,7 +64,7 @@ public class Tour {
     @Column(name = "ideal_time", nullable = false)
     private String idealTime;
 
-    @Lob
+    //@Lob
     @Column(name = "description")
     private String description;
 
