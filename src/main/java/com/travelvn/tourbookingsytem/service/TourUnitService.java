@@ -66,7 +66,7 @@ public class TourUnitService {
      */
     public ApiResponse<List<TourUnitResponse>> findTours(FindTourRequest findTourRequest) {
         log.info("Tour Serive NOW");
-        return switch(findTourRequest.getType()){
+        return switch (findTourRequest.getType()) {
             case 1 -> hotTours(findTourRequest);
             case 2 -> discountedTours(findTourRequest);
             case 3 -> newTours(findTourRequest);
@@ -82,7 +82,7 @@ public class TourUnitService {
      * @param findTourRequest thông tin tìm kiếm
      * @return Danh sách tour phù hợp
      */
-    public ApiResponse<List<TourUnitResponse>> searchTour(FindTourRequest findTourRequest){
+    public ApiResponse<List<TourUnitResponse>> searchTour(FindTourRequest findTourRequest) {
         try {
             CriteriaBuilder cb = entityManager.getCriteriaBuilder();
             CriteriaQuery<TourUnit> query = cb.createQuery(TourUnit.class);
@@ -159,7 +159,7 @@ public class TourUnitService {
 //                    log.info(count + ": " +tourunit.getTour().getTourId());
                     uniqueTours.add(tourunit);
                     count++;
-                    if(count == ACTUAL_ITEM_OF_PAGE){
+                    if (count == ACTUAL_ITEM_OF_PAGE) {
                         break;
                     }
                 }
@@ -270,7 +270,7 @@ public class TourUnitService {
                 }
             }
             */
-             predicates.add(TourUnitSpecification.priceInRange(request.getPrice()).toPredicate(root, query, cb));
+            predicates.add(TourUnitSpecification.priceInRange(request.getPrice()).toPredicate(root, query, cb));
         }
 
 //        predicates.add(cb.greaterThan(root.get("availableCapacity"), 0));
@@ -301,7 +301,7 @@ public class TourUnitService {
      * @param findTourRequest thông tin tìm kiếm
      * @return Danh sách tour phù hợp
      */
-    public ApiResponse<List<TourUnitResponse>> hotTours(FindTourRequest findTourRequest){
+    public ApiResponse<List<TourUnitResponse>> hotTours(FindTourRequest findTourRequest) {
         try {
             List<TourUnit> tours = tourUnitRepository.hotTours();
 
@@ -345,7 +345,7 @@ public class TourUnitService {
      * @param findTourRequest thông tin tìm kiếm
      * @return Danh sách tour phù hợp
      */
-    public ApiResponse<List<TourUnitResponse>> discountedTours(FindTourRequest findTourRequest){
+    public ApiResponse<List<TourUnitResponse>> discountedTours(FindTourRequest findTourRequest) {
         try {
             List<TourUnit> tours = tourUnitRepository.discountedTours();
 
@@ -389,7 +389,7 @@ public class TourUnitService {
      * @param findTourRequest thông tin tìm kiếm
      * @return Danh sách tour phù hợp
      */
-    public ApiResponse<List<TourUnitResponse>> newTours(FindTourRequest findTourRequest){
+    public ApiResponse<List<TourUnitResponse>> newTours(FindTourRequest findTourRequest) {
         try {
             List<TourUnit> tours = tourUnitRepository.newTours();
 
@@ -433,14 +433,14 @@ public class TourUnitService {
      * @param findTourRequest thông tin tìm kiếm
      * @return Danh sách tour phù hợp
      */
-    public ApiResponse<List<TourUnitResponse>> toursByCategory(FindTourRequest findTourRequest){
+    public ApiResponse<List<TourUnitResponse>> toursByCategory(FindTourRequest findTourRequest) {
         try {
             List<TourUnit> tours = tourUnitRepository.toursByCategory(findTourRequest.getCategory());
 
             int itemsQuant = ACTUAL_ITEM_OF_PAGE < tours.size() ? ACTUAL_ITEM_OF_PAGE : tours.size();
 
             return ApiResponse.<List<TourUnitResponse>>builder()
-                    .message("Có " + itemsQuant + " tour "+findTourRequest.getCategory().toLowerCase())
+                    .message("Có " + itemsQuant + " tour " + findTourRequest.getCategory().toLowerCase())
                     .result(/*List<TourResponse> responseList = */tours.stream()
 //                    .map(tourUnitMapper::toTourUnitResponseByFound)
                             .map(tourUnit -> {
@@ -467,14 +467,14 @@ public class TourUnitService {
      * @param findTourRequest thông tin tìm kiếm
      * @return Danh sách tour phù hợp
      */
-    public ApiResponse<List<TourUnitResponse>> toursByFestival(FindTourRequest findTourRequest){
+    public ApiResponse<List<TourUnitResponse>> toursByFestival(FindTourRequest findTourRequest) {
         try {
             List<TourUnit> tours = tourUnitRepository.toursByFestival(findTourRequest.getFestival());
 
             int itemsQuant = ACTUAL_ITEM_OF_PAGE < tours.size() ? ACTUAL_ITEM_OF_PAGE : tours.size();
 
             return ApiResponse.<List<TourUnitResponse>>builder()
-                    .message("Có " + itemsQuant + " tour dịp lễ " +findTourRequest.getFestival())
+                    .message("Có " + itemsQuant + " tour dịp lễ " + findTourRequest.getFestival())
                     .result(/*List<TourResponse> responseList = */tours.stream()
 //                    .map(tourUnitMapper::toTourUnitResponseByFound)
                             .map(tourUnit -> {
@@ -540,12 +540,34 @@ public class TourUnitService {
 
     /**
      * Lấy các đơn vị tour theo tháng và năm
+     *
      * @param month tháng
-     * @param year năm
+     * @param year  năm
      * @return Danh sách các đơn vị tour theo tháng và năm
      */
-    public List<TourUnitCalendarResponse> getTourUnitCalendar(int month, int year, String tourId){
+    public List<TourUnitCalendarResponse> getTourUnitCalendar(int month, int year, String tourId) {
         List<TourUnit> tourUnits = tourUnitRepository.getTourUnitCalendar(month, year, tourId);
         return tourUnits.stream().map(tourUnitCalendarMapper::tourUnitCalendarResponse).collect(Collectors.toList());
+    }
+
+    /**
+     * Lấy thông tin chi tiết 1 đơn vị tour
+     *
+     * @param tourUnitId Mã đơn vị tour
+     * @return Thông tin chi tiết đơn vị tour
+     */
+    public TourUnitResponse getTourUnit(String tourUnitId) {
+        try {
+            log.info("TUN: {}", tourUnitId);
+            TourUnit tourUnit = tourUnitRepository.findById(tourUnitId).orElseThrow(
+                    () -> new AppException(ErrorCode.TOURUNIT_NOT_EXISTED)
+            );
+
+            return tourUnitMapper.toTourUnitResponseByFound(tourUnit);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
