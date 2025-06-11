@@ -10,21 +10,24 @@ import com.travelvn.tourbookingsytem.model.Image;
 import com.travelvn.tourbookingsytem.model.Tour;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
 import org.mapstruct.MappingTarget;
-import org.mapstruct.factory.Mappers;
-import org.mapstruct.*;
+import org.mapstruct.Named;
+import java.util.stream.Collectors;
 
 
 @Named("TourMapper")
 @Mapper(componentModel = "spring", uses = {ImageMapper.class, CategoryMapper.class})
 public interface TourMapper {
     Tour toTour(TourRequest tourRequest);
-//    Tour toTour(TourResponse tourResponse);
 
     @Mapping(target = "category", ignore = true)
     @Mapping(target = "tourOperator", ignore = true)
     @Mapping(target = "lastUpdatedOperator", ignore = true)
+    @Mapping(target = "imageMap", ignore = true) // Bỏ qua imageMap vì được xử lý riêng
     Tour toEntity(TourAdRequest tourAdRequest);
+
+    @Mapping(target = "imageUrls", expression = "java(tour.getImageMap().values().stream().collect(java.util.stream.Collectors.toList()))")
 
     TourAdResponse toResponse(Tour tour);
 
@@ -32,32 +35,31 @@ public interface TourMapper {
     @Mapping(target = "category", ignore = true)
     @Mapping(target = "tourOperator", ignore = true)
     @Mapping(target = "lastUpdatedOperator", ignore = true)
+    @Mapping(target = "imageMap", ignore = true) // Bỏ qua imageMap
     void updateEntityFromRequest(TourAdRequest tourAdRequest, @MappingTarget Tour tour);
-//    TourResponse toTourResponse(Tour tour);
 
     @Named("toTourResponseByFound")
     @Mappings({
             @Mapping(target = "tourOperator", ignore = true),
             @Mapping(target = "lastUpdatedOperator", ignore = true),
             @Mapping(target = "tourProgramSet", ignore = true),
-//            @Mapping(target = "imageSet", ignore = true),
-            @Mapping(target = "firstImageUrl", ignore = true) // Bỏ qua ánh xạ trực tiếp cho firstImageUrl
+            @Mapping(target = "firstImageUrl", ignore = true) // Bỏ qua ánh xạ trực tiếp
     })
-//    @Mapping(target = "tourUnitSet", ignore = true)
     TourResponse toTourResponseByFound(Tour tour);
 
-//    @AfterMapping
     default void setFirstImageUrl(Tour tour, @MappingTarget TourResponse tourResponse) {
-        if (tour.getImageSet() != null && !tour.getImageSet().isEmpty()) {
-            // Lấy ảnh đầu tiên từ Set (không đảm bảo thứ tự, trừ khi Set có thứ tự như LinkedHashSet)
-            Image firstImage = tour.getImageSet().iterator().next();
-            tourResponse.setFirstImageUrl(firstImage.getUrl()); // Giả sử class Image có method getUrl()
-        } else {
-            tourResponse.setFirstImageUrl("https://hoanghamobile.com/tin-tuc/wp-content/uploads/2024/04/anh-ha-noi.jpg"); // Hoặc một giá trị mặc định nếu cần
+        // Ưu tiên imageMap (tích hợp Cloudinary)
+        if (tour.getImageMap() != null && !tour.getImageMap().isEmpty()) {
+            tourResponse.setFirstImageUrl(tour.getImageMap().values().iterator().next());
         }
-//        System.out.println("AfterMapping is running...");
+        // Hồi quy về imageSet (logic cũ)
+        else if (tour.getImageSet() != null && !tour.getImageSet().isEmpty()) {
+            Image firstImage = tour.getImageSet().iterator().next();
+            tourResponse.setFirstImageUrl(firstImage.getUrl());
+        }
+        // Mặc định nếu không có ảnh
+        else {
+            tourResponse.setFirstImageUrl("https://hoanghamobile.com/tin-tuc/wp-content/uploads/2024/04/anh-ha-noi.jpg");
+        }
     }
-
-
-//    TourRequest toTourRequest(Tour tour);
 }

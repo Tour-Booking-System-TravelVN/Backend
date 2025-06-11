@@ -38,7 +38,7 @@ public class SecurityConfig {
             "/payment/**"};
 
     //Các endpoint được phép gọi khi chưa có token với phương thức GET
-    private final String[] PUBLIC_GET_ENDPOINTS = {"/tourunit/foundtourlist", "/tourunit/calendar", "/tour/calendar/*", "/festival/carousel", "/rating/tour-detail/*", "/program/tour-detail/*"/*, "/order/**"*/};
+    private final String[] PUBLIC_GET_ENDPOINTS = {"/tourunit/foundtourlist", "/tourunit/calendar", "/tour/calendar/*", "/festival/carousel", "/rating/tour-detail/*", "/program/tour-detail/*", "/tourunit/detail"/*, "/order/**"*/};
 
     //Các endpoint GET của khách hàng
     private final String[] CUSTOMER_GET_ENDPOINTS = {"/booking/checkbeforebooking", "/booking/*","/customer/myinfo", /*"/tourunit/mytours",*/ "/booking/mytours", "/rating/rating-tour/check"};
@@ -48,6 +48,9 @@ public class SecurityConfig {
 
     //Các endpoint PUT của khách hàng
     private final String[] CUSTOMER_PUT_ENDPOINTS = {"/changePwd", "/customer/myinfo/update","/booking/cancel/*"};
+
+    //Các endpoint GET của HDV
+    private final String[] GENERAL_GET_ENDPOINTS = {"/user/myinfo"};
 
     private final CustomJwtDecoder jwtDecoder;
 
@@ -70,7 +73,8 @@ public class SecurityConfig {
             CorsConfiguration config = new CorsConfiguration();
             config.setAllowedOrigins(Arrays.asList(
                     "http://localhost:5500",
-                    "http://127.0.0.1:5500"
+                    "http://127.0.0.1:5500",
+                    "http://127.0.0.1:5501"
             ));
             config.addAllowedHeader("*");
             config.addAllowedMethod("*");
@@ -92,6 +96,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, CUSTOMER_GET_ENDPOINTS).hasRole(Role.CUSTOMER.name())
                         .requestMatchers(HttpMethod.POST, CUSTOMER_POST_ENDPOINTS).hasRole(Role.CUSTOMER.name())
                         .requestMatchers(HttpMethod.PUT, CUSTOMER_PUT_ENDPOINTS).hasRole(Role.CUSTOMER.name())
+                        .requestMatchers(HttpMethod.GET, GENERAL_GET_ENDPOINTS).hasAnyRole(Role.TOURGUIDE.name(), Role.CUSTOMER.name(), Role.ADMINISTRATOR.name(), Role.TOUROPERATOR.name())
 //                        .requestMatchers(HttpMethod.POST, "/auth/refresh").hasRole(Role.CUSTOMER.name())
                         .anyRequest().authenticated());
 
@@ -156,7 +161,8 @@ public class SecurityConfig {
         // Chỉ định nguồn gốc (Frontend)
         config.setAllowedOrigins(Arrays.asList(
                 "http://localhost:5500",
-                "http://127.0.0.1:5500"
+                "http://127.0.0.1:5500",
+                "http://127.0.0.1:5501"
         ));
 
         // Cho phép tất cả các method (GET, POST, PUT, DELETE, ...)

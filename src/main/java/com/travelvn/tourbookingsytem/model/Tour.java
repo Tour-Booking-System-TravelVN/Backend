@@ -6,7 +6,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 @Getter
@@ -18,6 +20,7 @@ import java.util.Set;
 @Entity
 @Table(name = "tour")
 public class Tour {
+
     @Id
     @Column(name = "tour_id", nullable = false, length = 17)
     private String tourId;
@@ -82,15 +85,22 @@ public class Tour {
     @Column(name = "exclusions", nullable = false)
     private String exclusions;
 
-    @ToString.Exclude
-    @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ElementCollection
+    @CollectionTable(name = "tour_images", joinColumns = @JoinColumn(name = "tour_id"))
+    @MapKeyColumn(name = "public_id")
+    @Column(name = "image_url")
     @Builder.Default
-    private Set<TourProgram> tourProgramSet = new HashSet<>();
+    private Map<String, String> imageMap = new HashMap<>(); // Hỗ trợ Cloudinary
 
     @ToString.Exclude
     @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
-    private Set<Image> imageSet = new HashSet<>();
+    private Set<Image> imageSet = new HashSet<>(); // Logic cũ
+
+    @ToString.Exclude
+    @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private Set<TourProgram> tourProgramSet = new HashSet<>();
 
     @ToString.Exclude
     @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -111,6 +121,7 @@ public class Tour {
     public Integer getLastUpdatedOperatorId() {
         return lastUpdatedOperator != null ? lastUpdatedOperator.getId() : null;
     }
+
     @PrePersist
     protected void onCreate() {
         this.createdTime = Instant.now();
@@ -121,5 +132,4 @@ public class Tour {
     protected void onUpdate() {
         this.lastUpdatedTime = Instant.now();
     }
-
 }

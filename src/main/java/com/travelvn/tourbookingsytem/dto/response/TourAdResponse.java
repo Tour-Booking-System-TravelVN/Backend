@@ -3,6 +3,7 @@ package com.travelvn.tourbookingsytem.dto.response;
 import lombok.*;
 
 import java.time.Instant;
+import java.util.List;
 
 @Getter
 @Setter
@@ -28,4 +29,5 @@ public class TourAdResponse {
     private Instant lastUpdatedTime;
     private String inclusions;
     private String exclusions;
+    private List<String> imageUrls;
 }

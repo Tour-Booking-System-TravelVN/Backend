@@ -548,4 +548,25 @@ public class TourUnitService {
         List<TourUnit> tourUnits = tourUnitRepository.getTourUnitCalendar(month, year, tourId);
         return tourUnits.stream().map(tourUnitCalendarMapper::tourUnitCalendarResponse).collect(Collectors.toList());
     }
+
+    /**
+     * Lấy thông tin chi tiết 1 đơn vị tour
+     *
+     * @param tourUnitId Mã đơn vị tour
+     * @return Thông tin chi tiết đơn vị tour
+     */
+    public TourUnitResponse getTourUnit(String tourUnitId) {
+        try {
+            log.info("TUN: {}", tourUnitId);
+            TourUnit tourUnit = tourUnitRepository.findById(tourUnitId).orElseThrow(
+                    () -> new AppException(ErrorCode.TOURUNIT_NOT_EXISTED)
+            );
+
+            return tourUnitMapper.toTourUnitResponseByFound(tourUnit);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

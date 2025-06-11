@@ -46,6 +46,13 @@ public class TourUnitController {
                 .build();
     }
 
+    @GetMapping("/detail")
+    public ApiResponse<TourUnitResponse> getTourCalendar(@RequestParam("tourUnitId") String tourUnitId) {
+        return ApiResponse.<TourUnitResponse>builder()
+                .result(tourUnitService.getTourUnit(tourUnitId))
+                .build();
+    }
+
 //    @GetMapping("/mytours")
 //    public ApiResponse<Page<TourUnitResponse>> myTours(@RequestParam Map<String, String> params) {
 //        String status = params.get("status");
