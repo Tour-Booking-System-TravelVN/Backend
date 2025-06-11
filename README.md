@@ -8,12 +8,9 @@ Hệ thống quản lý tour du lịch trong nước TravelVN hỗ trợ doanh n
 
 ## 2. Thông tin nhóm thực hiện
 
-| Họ tên | Vai trò |
-| ------ | ------- |
-|        |         |
-
-| **Kiều Đức Thịnh**     | Nhóm trưởng - Phụ trách fullstack các chức năng phía **khách hàng**                                          |
+| Họ tên                 | Vai trò                                                                                                      |
 | ---------------------- | ------------------------------------------------------------------------------------------------------------ |
+| **Kiều Đức Thịnh**     | Nhóm trưởng - Phụ trách fullstack các chức năng phía **khách hàng**                                          |
 | **Bùi Tuấn Anh**       | Phát triển **giao diện mobile (Kotlin)** cho **khách hàng** và **hướng dẫn viên**, chức năng **nhắn tin**    |
 | **Đàm Khắc Quang Anh** | Phát triển **backend** cho **người quản lý** và **người điều hành tour**, **kết nối API** frontend tương ứng |
 | **Đào Việt Anh**       | Phát triển **frontend** cho **người quản lý** và **người điều hành tour**                                    |
